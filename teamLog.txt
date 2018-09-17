@@ -1,2 +1,3 @@
 Log 9/16/18
-
+p: Created main window
+JF: Woking on mainUI
