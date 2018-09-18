@@ -1,3 +1,6 @@
 Log 9/16/18
 p: Created main window
 JF: Woking on mainUI
+
+Log 9/18/18
+R: Created an original image of a CSE^442 ship. Idea is good, but design is basic.
