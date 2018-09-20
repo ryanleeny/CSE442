@@ -32,6 +32,9 @@ class main(object):
         pygame.init()
         window = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Window")
+
+        #clock###################################3333
+        clock=pygame.time.Clock()
 ###################################main loop of the GUI#########################
         gameLoop = True  # ;This the the loop of the main game, FALSE to exit the loop
         while gameLoop:
@@ -80,6 +83,7 @@ class main(object):
 
 
 ############################refresh everything###############################
+            clock.tick(60)
             pygame.display.update()
 
     pygame.quit()
