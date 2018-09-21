@@ -14,7 +14,8 @@ class button():
 
                 if action == "play":
                     print("Play Button Click, go to gameLoop")
-                    game.gameLoop()
+                    global gaming_flag
+                    gaming_flag = True
 
                 if action == "quit":
                     pygame.quit()
@@ -40,12 +41,10 @@ class button():
             textSurface = largefont.render(text, True, color)
         return textSurface, textSurface.get_rect()
 
-
 class game():
     def gameLoop():
         gameExit = False
         gameOver = False
-        # while not gameExit:
         print ("Game Playing")
 
 class main(object):
@@ -54,7 +53,7 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
-    global black,white,green,red,gold,blue,game_score,background,width,height,x,y,cursor1,Fire_In_The_Hole
+    global black,white,green,red,gold,blue,game_score,background,width,height,x,y,cursor1,Fire_In_The_Hole,gaming_flag
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (0, 255, 0)
@@ -66,6 +65,7 @@ class main(object):
     game_score = 0#score to display in the screen
     background = pygame.image.load('background.jpeg')
     cursor1 =pygame.image.load('ship.png') #very basic design on the cursor/ship, but can work on it later
+    gaming_flag = False
 
     ####True mean the button is being pressed####
     Fire_In_The_Hole = False
@@ -119,10 +119,12 @@ class main(object):
             Fire_In_The_Hole = False## Button press reset##
 
             ####Create Button####
-            button.button("play", 150, 350, 100, 50, green, (0,255,0), action="play")
-            button.button("setting", 150, 450, 100, 50, yellow, (255,255,0), action="setting")
-            button.button("quit", 150, 550, 100, 50, red, (255,0,0), action ="quit")
-
+            if gaming_flag:
+                pass
+            else:
+                button.button("play", 150, 350, 100, 50, green, (0,255,0), action="play")
+                button.button("setting", 150, 450, 100, 50, yellow, (255,255,0), action="setting")
+                button.button("quit", 150, 550, 100, 50, red, (255,0,0), action ="quit")
 
             ####coins_Display#####
             Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)#creating font object
