@@ -20,7 +20,7 @@ class main(object):
     height = 700#Window height
     game_score = 0#score to display in the screen
     background = pygame.image.load('background.jpeg')
-    cursor1 =pygame.image.load('cursor1.png') #cant find any good cursor so i use miku, if you guys find one repalce it
+    cursor1 =pygame.image.load('ship.png') #very basic design on the cursor/ship, but can work on it later
 
 ##################True mean the button is being pressed##############
     Fire_In_The_Hole = False
