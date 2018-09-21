@@ -119,9 +119,9 @@ class main(object):
             Fire_In_The_Hole = False## Button press reset##
 
             ####Create Button####
-            button.button("play", 150, 350, 100, 50, green, (0,255,0), action="play")
-            button.button("setting", 150, 450, 100, 50, yellow, (255,255,0), action="setting")
-            button.button("quit", 150, 550, 100, 50, red, (255,0,0), action ="quit")
+            button.button("Play", 150, 350, 100, 50, green, (0,255,0), action="play")
+            button.button("Settings", 150, 450, 100, 50, yellow, (255,255,0), action="setting")
+            button.button("Quit", 150, 550, 100, 50, red, (255,0,0), action ="quit")
 
 
             ####coins_Display#####
