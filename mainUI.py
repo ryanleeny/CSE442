@@ -10,18 +10,24 @@ class Button(object):
         global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
-            if click[0] == 1 and action != None:
+            if click[0] == 1 and action is not None:
 
                 if action == "15":
 
                     fifteen_flag = True
+                    thirty_flag = False
+                    sixty_flag = False
 
                 if action == "30":
 
+                    fifteen_flag = False
                     thirty_flag = True
+                    sixty_flag = False
 
                 if action == "60":
 
+                    fifteen_flag = False
+                    thirty_flag = False
                     sixty_flag = True
 
                 if action == "home":
@@ -135,9 +141,9 @@ class main(object):
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z,f
+        global z, FPS
         z = 180
-        f = 60
+        FPS = 60
         self.__create_sprites()
 
         ####main loop of the GUI#####
@@ -187,19 +193,22 @@ class main(object):
 
                 ###pfs###
                 if fifteen_flag:
-                    f = 15
+                    FPS = 15
+                    fifteen_flag = False
                     continue
                 if thirty_flag:
-                    f = 30
+                    FPS = 30
+                    thirty_flag = False
                     continue
                 if sixty_flag:
-                    f = 60
+                    FPS = 60
+                    sixty_flag = False
                     continue
 
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
 
-            if home_flag:
+            elif home_flag:
                 window.blit(background2, (x, y))
                 ####Create Button####
                 Button.button("play", 150, 350, 100, 50, green, (0, 255, 0), action="play")
@@ -217,7 +226,7 @@ class main(object):
                 window.blit(cursor1, (mx, my))
 
             #####refresh everything#####
-            clock.tick(f)
+            clock.tick(FPS)
             pygame.display.update()
 
 
