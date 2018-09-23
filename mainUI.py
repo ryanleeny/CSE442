@@ -3,49 +3,53 @@ import tkinter.messagebox
 import bg
 
 
-class button():
+class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
         cur = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
+        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action != None:
 
                 if action == "15":
-                    global fifteen_flag
+
                     fifteen_flag = True
 
                 if action == "30":
-                    global thirty_flag
+
                     thirty_flag = True
 
                 if action == "60":
-                    global sixty_flag
+
                     sixty_flag = True
 
                 if action == "home":
-                    global home_flag
+                    gaming_flag = False
+                    setting_flag = False
                     home_flag = True
 
                 if action == "setting":
                     #print("Setting Button Clicked")
-                    global setting_flag
+                    gaming_flag = False
                     setting_flag = True
+                    home_flag = False
 
                 if action == "play":
                     #print("Play Button Click, go to gameLoop")
-                    global gaming_flag
                     gaming_flag = True
+                    setting_flag = False
+                    home_flag = False
 
                 if action == "quit":
                     pygame.quit()
                     quit()
         else:
             pygame.draw.rect(window, inactive_color, (x, y, width, height))
-        button.text_to_button(text, black, x, y, width, height)
+        Button.text_to_button(text, black, x, y, width, height)
 
     def text_to_button(msg, color, buttonx, buttony, buttonwidth, buttonheight, size="small"):
-        textSurf, textRect = button.text_objects(msg, color, size)
+        textSurf, textRect = Button.text_objects(msg, color, size)
         textRect.center = ((buttonx + (buttonwidth / 2)), buttony + (buttonheight / 2))
         window.blit(textSurf, textRect)
 
@@ -62,25 +66,18 @@ class button():
         return textSurface, textSurface.get_rect()
 
 
-class game():
-    def gameflow(self):
-        gameExit = False
-        gameOver = False
-        # while not gameExit:
-        print("Game Playing")
-
-
-class setting():
-    def option(self):
+class Setting(object):
+    @staticmethod
+    def option():
         pygame.draw.line(window, white, (80, 300), (320, 300), 3)  # Draw a line
         window.blit(voice_col, (z, 289))
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
         window.blit(fps, (55, 380))
-        button.button("15", 190, 380, 100, 50, gold, (255, 255, 255), action="15")
-        button.button("30", 190, 450, 100, 50, gold, (255, 255, 255), action="30")
-        button.button("60", 190, 520, 100, 50, gold, (255, 255, 255), action="60")
-        button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
+        Button.button("15", 190, 380, 100, 50, gold, (255, 255, 255), action="15")
+        Button.button("30", 190, 450, 100, 50, gold, (255, 255, 255), action="30")
+        Button.button("60", 190, 520, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
         window.blit(home, (350, 652))
 
 
@@ -113,7 +110,7 @@ class main(object):
     fps = pygame.image.load('fps.png')
     gaming_flag = False
     setting_flag = False
-    home_flag = False
+    home_flag = True
 
     ####Unuse Declaration#####
     x = width * 1  # x and y is the position of background img
@@ -180,7 +177,7 @@ class main(object):
 
             elif setting_flag:
                 window.blit(background2, (x, y)) #set up the background
-                setting.option(self)  #branch to function named option() from class setting
+                Setting.option()  #branch to function named option() from class setting
 
                 ###---voice control---###
                 if (mouse[0] >= 48) and (mouse[0] <= 77) and (mouse[1] <= 328) and (mouse[1] >= 300) and (z > 80) and (mousepress[0] == True):
@@ -202,19 +199,12 @@ class main(object):
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
 
-                ###back to main menu###
-                if home_flag:
-                    #main.__init__(self)
-                    #setting_flag = False
-                    #continue
-                    break
-
-            else:
+            if home_flag:
                 window.blit(background2, (x, y))
                 ####Create Button####
-                button.button("play", 150, 350, 100, 50, green, (0, 255, 0), action="play")
-                button.button("setting", 150, 450, 100, 50, yellow, (255, 255, 0), action="setting")
-                button.button("quit", 150, 550, 100, 50, red, (255, 0, 0), action="quit")
+                Button.button("play", 150, 350, 100, 50, green, (0, 255, 0), action="play")
+                Button.button("setting", 150, 450, 100, 50, yellow, (255, 255, 0), action="setting")
+                Button.button("quit", 150, 550, 100, 50, red, (255, 0, 0), action="quit")
                 window.blit(sound_off, (350,0))
 
                 ####coins_Display#####
@@ -230,7 +220,6 @@ class main(object):
             clock.tick(f)
             pygame.display.update()
 
-pygame.quit()
 
 if __name__ == '__main__':
     pygame.init()
