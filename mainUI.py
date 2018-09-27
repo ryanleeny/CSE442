@@ -1,6 +1,7 @@
 import pygame
 import tkinter.messagebox
-import bg
+import Background as bg
+import Hero
 
 
 class Button(object):
@@ -104,16 +105,17 @@ class main(object):
     blue = (23, 44, 225)
     width = 401  # Window width
     height = 700  # Window height
+    SCREEN_RECT = pygame.Rect(0, 0, width, height)
     game_score = 0  # score to display in the screen
-    background = pygame.image.load('background.jpeg')
-    background2 = pygame.image.load('bg2.jpeg')
-    cursor1 = pygame.image.load('ship.png')  # very basic design on the cursor/ship, but can work on it later
-    voice_low = pygame.image.load('vl.png')
-    voice_high = pygame.image.load('vh.png')
-    voice_col = pygame.image.load('vc.png')
-    sound_off = pygame.image.load('so.png')
-    home = pygame.image.load('home.png')
-    fps = pygame.image.load('fps.png')
+    background = pygame.image.load('./images/background.jpeg')
+    background2 = pygame.image.load('./images/bg2.jpeg')
+    cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
+    voice_low = pygame.image.load('./images/vl.png')
+    voice_high = pygame.image.load('./images/vh.png')
+    voice_col = pygame.image.load('./images/vc.png')
+    sound_off = pygame.image.load('./images/so.png')
+    home = pygame.image.load('./images/home.png')
+    fps = pygame.image.load('./images/fps.png')
     gaming_flag = False
     setting_flag = False
     home_flag = True
@@ -129,6 +131,7 @@ class main(object):
 
     def __create_sprites(self):
         self.__create_background()
+        self.hero = Hero.Hero(self.SCREEN_RECT)
 
     def __create_background(self):
         bg1 = bg.Background()
@@ -138,6 +141,8 @@ class main(object):
     def __update_sprites(self):
         self.bg_group.update()
         self.bg_group.draw(window)
+        self.hero.hero_move()
+        window.blit(self.hero.plane, self.hero.rect)
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
@@ -146,34 +151,34 @@ class main(object):
         FPS = 60
         self.__create_sprites()
 
-        ####main loop of the GUI#####
-        gameLoop = True  # ;This the the loop of the main game, FALSE to exit the loop
-        while gameLoop:
+        # ###main loop of the GUI#### #
+        game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
+        while game_loop:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
 
-            #####add backcground moving alone with mouse#####
+            # ####add backcground moving alone with mouse#### #
             mouse = pygame.mouse.get_pos()
             global x, y, fifteen_flag, thirty_flag, sixty_flag
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
-            #window.blit(background, (x, y))
+            # window.blit(background, (x, y))
             fifteen_flag = False #fps#
             thirty_flag = False
             sixty_flag = False
 
-            #####mouse######
+            # ####mouse##### #
             mx = mouse[0] - cursor1.get_width() / 2
             my = mouse[1] - cursor1.get_height() / 2
             pygame.mouse.set_visible(False)
 
-            #####Making button change color by matching the button location#####
+            # ####Making button change color by matching the button location#### #
             mouse = pygame.mouse.get_pos()
 
-            #####Add Mouse press detection######
-            mousepress = pygame.mouse.get_pressed()
+            # ####Add Mouse press detection##### #
+            mouse_press = pygame.mouse.get_pressed()
 
             if gaming_flag:
                 # function for creat enmies
@@ -186,9 +191,9 @@ class main(object):
                 Setting.option()  #branch to function named option() from class setting
 
                 ###---voice control---###
-                if (mouse[0] >= 48) and (mouse[0] <= 77) and (mouse[1] <= 328) and (mouse[1] >= 300) and (z > 80) and (mousepress[0] == True):
+                if (mouse[0] >= 48) and (mouse[0] <= 77) and (mouse[1] <= 328) and (mouse[1] >= 300) and (z > 80) and (mouse_press[0] == True):
                     z = z - 10
-                if (mouse[0] >= 320) and (mouse[0] <= 360) and (mouse[1] <= 330) and (mouse[1] >= 296) and (z < 300) and (mousepress[0] == True):
+                if (mouse[0] >= 320) and (mouse[0] <= 360) and (mouse[1] <= 330) and (mouse[1] >= 296) and (z < 300) and (mouse_press[0] == True):
                     z = z + 10
 
                 ###pfs###
