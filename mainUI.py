@@ -180,6 +180,9 @@ class main(object):
             # ####Add Mouse press detection##### #
             mouse_press = pygame.mouse.get_pressed()
 
+            # ####Add Keyboard press detection #
+            keyboard = pygame.key.get_pressed()
+
             if gaming_flag:
                 # function for creat enmies
                 # fuction for check colid
@@ -190,11 +193,17 @@ class main(object):
                 window.blit(background2, (x, y)) #set up the background
                 Setting.option()  #branch to function named option() from class setting
 
-                ###---voice control---###
-                if (mouse[0] >= 48) and (mouse[0] <= 77) and (mouse[1] <= 328) and (mouse[1] >= 300) and (z > 80) and (mouse_press[0] == True):
+                ###---volume control---###
+                if z <= 80:
+                    z = 80
+                if z >= 300:
+                    z = 300
+                if (77 >= mouse[0] >= 48) and (300 <= mouse[1] <= 328) and (z > 80) and (mouse_press[0] == True):
                     z = z - 10
-                if (mouse[0] >= 320) and (mouse[0] <= 360) and (mouse[1] <= 330) and (mouse[1] >= 296) and (z < 300) and (mouse_press[0] == True):
+                if (360 >= mouse[0] >= 320) and (296 <= mouse[1] <= 330) and (z < 300) and (mouse_press[0] == True):
                     z = z + 10
+                if (330 >= mouse[1] >= 295) and (310 >= mouse[0] >= 90) and (mouse_press[0] == True):
+                    z = mouse[0] - 10
 
                 ###pfs###
                 if fifteen_flag:
