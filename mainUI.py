@@ -2,6 +2,7 @@ import pygame
 import tkinter.messagebox
 import Background as bg
 import Hero
+import Enemies
 
 
 class Button(object):
@@ -120,6 +121,7 @@ class main(object):
     setting_flag = False
     home_flag = True
 
+
     ####Unuse Declaration#####
     x = width * 1  # x and y is the position of background img
     y = height * 1
@@ -129,35 +131,55 @@ class main(object):
         textSurface = font.render(text, True, gold)
         return textSurface, textSurface.get_rect()
 
-    def __create_sprites(self):
-        self.__create_background()
-        self.hero = Hero.Hero(self.SCREEN_RECT)
-
-    def __create_background(self):
+    def __create_sprites_group(self):
         bg1 = bg.Background()
         bg2 = bg.Background(True)
         self.bg_group = pygame.sprite.Group(bg1, bg2)
+        self.hero = Hero.Hero(self.SCREEN_RECT)
+        self.enemies = pygame.sprite.Group()
+        self.pawn_enemies = pygame.sprite.Group()
 
     def __update_sprites(self):
+        # move background
         self.bg_group.update()
         self.bg_group.draw(window)
-        self.hero.hero_move()
-        window.blit(self.hero.plane, self.hero.rect)
+        # move hero
+        if self.hero.survival:
+            self.hero.hero_move()
+            window.blit(self.hero.plane, self.hero.rect)
+        # move pawn enemies
+        for pawn in self.pawn_enemies:
+            if pawn.survival:
+                pawn.move()
+                window.blit(pawn.pawn, pawn.rect)
+
+    def __event_handler(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif gaming_flag:
+                if event.type == Enemies.CREATE_PAWN_EVENT:
+                    Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies)
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
         global z, FPS
         z = 180
         FPS = 60
-        self.__create_sprites()
+        # default create pawn enemy time 1500ms, will change during the score up
+        create_pawn_time = 1500
+        self.__create_sprites_group()
+        # set create pawn timer
+        pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
 
         # ###main loop of the GUI#### #
         game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
         while game_loop:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
+            self.__event_handler()
+
+
+
 
             # ####add backcground moving alone with mouse#### #
             mouse = pygame.mouse.get_pos()
@@ -180,12 +202,7 @@ class main(object):
             # ####Add Mouse press detection##### #
             mouse_press = pygame.mouse.get_pressed()
 
-            # ####Add Keyboard press detection #
-            keyboard = pygame.key.get_pressed()
-
             if gaming_flag:
-                # function for creat enmies
-                # fuction for check colid
                 # function for update screen
                 self.__update_sprites()
 
@@ -193,17 +210,11 @@ class main(object):
                 window.blit(background2, (x, y)) #set up the background
                 Setting.option()  #branch to function named option() from class setting
 
-                ###---volume control---###
-                if z <= 80:
-                    z = 80
-                if z >= 300:
-                    z = 300
-                if (77 >= mouse[0] >= 48) and (300 <= mouse[1] <= 328) and (z > 80) and (mouse_press[0] == True):
+                ###---voice control---###
+                if (mouse[0] >= 48) and (mouse[0] <= 77) and (mouse[1] <= 328) and (mouse[1] >= 300) and (z > 80) and (mouse_press[0] == True):
                     z = z - 10
-                if (360 >= mouse[0] >= 320) and (296 <= mouse[1] <= 330) and (z < 300) and (mouse_press[0] == True):
+                if (mouse[0] >= 320) and (mouse[0] <= 360) and (mouse[1] <= 330) and (mouse[1] >= 296) and (z < 300) and (mouse_press[0] == True):
                     z = z + 10
-                if (330 >= mouse[1] >= 295) and (310 >= mouse[0] >= 90) and (mouse_press[0] == True):
-                    z = mouse[0] - 10
 
                 ###pfs###
                 if fifteen_flag:

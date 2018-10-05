@@ -18,8 +18,9 @@ class Hero(pygame.sprite.Sprite):
         # set hero position
         self.background_rect = background_size
         self.rect = self.plane1.get_rect()
-        self.rect.centerx = self.background_rect.centerx
-        self.rect.bottom = self.background_rect.bottom - 60
+        self.set_position()
+        # mask for collide check
+        self.mask = pygame.mask.from_surface(self.plane)
         # set hero death animation list
         '''
         This part is not ready yet
@@ -46,6 +47,8 @@ class Hero(pygame.sprite.Sprite):
         self.counter = 30
         # set hero speed
         self.speed = 5
+        # survival
+        self.survival = True
 
     def __move_up(self):
         if self.rect.top < 0:
@@ -95,6 +98,13 @@ class Hero(pygame.sprite.Sprite):
             self.counter = 3
         # 计数器计数
         self.counter -= 1
+
+    def set_position(self):
+        
+        self.survival = True
+        self.rect.centerx = self.background_rect.centerx
+        self.rect.bottom = self.background_rect.bottom - 60
+
 
 
 

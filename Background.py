@@ -13,7 +13,7 @@ class Background(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
 
-        self.speed = 2
+        self.speed = 1
 
         if is_alt:
             self.rect.y = -self.rect.height
