@@ -15,7 +15,6 @@ class Button(object):
             if click[0] == 1 and action is not None:
 
                 if action == "15":
-
                     fifteen_flag = True
                     thirty_flag = False
                     sixty_flag = False
@@ -95,8 +94,8 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
-    global black, white, green, red, gold, blue, yellow, game_score, home, background, background2, fps, voice_col,\
-        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag
+    global black, white, green, red, gold, blue, yellow, game_score, home, background, background2, background3, fps, voice_col,\
+        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -110,17 +109,18 @@ class main(object):
     game_score = 0  # score to display in the screen
     background = pygame.image.load('./images/background.jpeg')
     background2 = pygame.image.load('./images/bg2.jpeg')
+    background3 = pygame.image.load('./images/bg3.jpg')
     cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
     voice_low = pygame.image.load('./images/vl.png')
     voice_high = pygame.image.load('./images/vh.png')
     voice_col = pygame.image.load('./images/vc.png')
     sound_off = pygame.image.load('./images/so.png')
+    sound_on = pygame.image.load('./images/sb.png')
     home = pygame.image.load('./images/home.png')
     fps = pygame.image.load('./images/fps.png')
     gaming_flag = False
     setting_flag = False
     home_flag = True
-
 
     ####Unuse Declaration#####
     x = width * 1  # x and y is the position of background img
@@ -164,8 +164,9 @@ class main(object):
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z, FPS
+        global z, FPS, z2
         z = 180
+        z2 = z
         FPS = 60
         # default create pawn enemy time 1500ms, will change during the score up
         create_pawn_time = 1500
@@ -173,20 +174,27 @@ class main(object):
         # set create pawn timer
         pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
 
+        ####Play background music####
+        pygame.mixer.music.load('music/Power Bots Loop.wav')  # load the music
+        pygame.mixer.music.play(-1)  # -1 means unlimit play
+        # pygame.mixer.music.queue('next.mp3') #second music
+        pygame.mixer.music.set_volume((z - 80) / 220)
+
         # ###main loop of the GUI#### #
         game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
         while game_loop:
             self.__event_handler()
 
-
-
+            # ####Add Keyboard press detection##### #
+            k_press = pygame.key.get_pressed()
+            # ####Add Mouse press detection and get position of mouse##### #
+            mouse_press = pygame.mouse.get_pressed()
+            mouse = pygame.mouse.get_pos()
 
             # ####add backcground moving alone with mouse#### #
-            mouse = pygame.mouse.get_pos()
             global x, y, fifteen_flag, thirty_flag, sixty_flag
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
-            # window.blit(background, (x, y))
             fifteen_flag = False #fps#
             thirty_flag = False
             sixty_flag = False
@@ -196,19 +204,15 @@ class main(object):
             my = mouse[1] - cursor1.get_height() / 2
             pygame.mouse.set_visible(False)
 
-            # ####Making button change color by matching the button location#### #
-            mouse = pygame.mouse.get_pos()
-
-            # ####Add Mouse press detection##### #
-            mouse_press = pygame.mouse.get_pressed()
-
             if gaming_flag:
                 # function for update screen
+                pygame.mixer.music.stop()
                 self.__update_sprites()
 
             elif setting_flag:
                 window.blit(background2, (x, y)) #set up the background
                 Setting.option()  #branch to function named option() from class setting
+                pygame.mixer.music.unpause()
 
                 ###---volume control---###
                 if z <= 80:
@@ -221,6 +225,8 @@ class main(object):
                     z = z + 10
                 if (330 >= mouse[1] >= 295) and (310 >= mouse[0] >= 90) and (mouse_press[0] == True):
                     z = mouse[0] - 10
+                pygame.mixer.music.set_volume((z - 80) / 220)
+                z2 = z
 
                 ###pfs###
                 if fifteen_flag:
@@ -240,17 +246,29 @@ class main(object):
                 window.blit(cursor1, (mx, my))
 
             elif home_flag:
-                window.blit(background2, (x, y))
+                window.blit(background3, (x, y))
+
                 ####Create Button####
-                Button.button("play", 150, 350, 100, 50, green, (0, 255, 0), action="play")
-                Button.button("setting", 150, 450, 100, 50, yellow, (255, 255, 0), action="setting")
-                Button.button("quit", 150, 550, 100, 50, red, (255, 0, 0), action="quit")
-                window.blit(sound_off, (350,0))
+                Button.button("play", 150, 300, 100, 50, green, (0, 255, 0), action="play")
+                Button.button("setting", 150, 400, 100, 50, yellow, (255, 255, 0), action="setting")
+                Button.button("quit", 150, 500, 100, 50, red, (255, 0, 0), action="quit")
+                window.blit(sound_off, (0, 0))
+                window.blit(sound_on, (50, 0))
+                pygame.draw.line(window, black, (46, 6), (46, 42), 2)
+
+                ####Mute button####
+                if (42 >= mouse[0] >= 0) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
+                    pygame.mixer.music.pause()
+                    z = 80
+
+                if (89 >= mouse[0] >= 46) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
+                    pygame.mixer.music.unpause()
+                    z = z2
 
                 ####coins_Display#####
                 Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)  # creating font object
                 textSurf, Score = text_objects("score: %d" % game_score, Score_text)  # Using the font object
-                Score.center = (200, 240)  # location of font object
+                Score.center = (200, 140)  # location of font object
                 window.blit(textSurf, Score)  # putting the font object in Window panel
 
                 #####draw the mouse here so is on top of everything else#####
