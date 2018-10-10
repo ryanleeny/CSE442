@@ -118,3 +118,5 @@ def add_enemies(name, bg_size, group1, group2):
 
     group1.add(enemy)
     group2.add(enemy)
+
+

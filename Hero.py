@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import weapon
 
 
 class Hero(pygame.sprite.Sprite):
@@ -21,6 +22,7 @@ class Hero(pygame.sprite.Sprite):
         self.set_position()
         # mask for collide check
         self.mask = pygame.mask.from_surface(self.plane)
+
         # set hero death animation list
         '''
         This part is not ready yet
@@ -74,6 +76,30 @@ class Hero(pygame.sprite.Sprite):
         else:
             self.rect.right += self.speed
 
+############################################################
+    def newbullet(self):
+        global newweapon
+        newweapon = weapon.Weapon(self.rect.centerx, self.rect.top)
+
+    global shootflag
+    shootflag = True
+
+    def shoot(self):
+        global shootflag
+
+        if (shootflag == True):
+            self.newbullet()
+            shootflag = False
+
+        if (newweapon.freqency_count == 0):
+            shootflag = True
+            newweapon.freqency_count = newweapon.freqency
+        sprites.add(newweapon)
+        weapons.add(newweapon)
+        sprites.update()
+        newweapon.freqency_count -= 1
+
+############################################################
     def hero_move(self):
         # get_input from keyboard
         key_pressed = pygame.key.get_pressed()
@@ -86,7 +112,10 @@ class Hero(pygame.sprite.Sprite):
             self.__move_left()
         if key_pressed[K_RIGHT]:
             self.__move_right()
-
+        if key_pressed[K_1]:
+            weapon.Weapon.weapon_choice = 0
+        if key_pressed[K_2]:
+            weapon.Weapon.weapon_choice = 1
         # change plane photo
         if self.switch:
             self.plane = self.plane1
@@ -99,6 +128,7 @@ class Hero(pygame.sprite.Sprite):
         # 计数器计数
         self.counter -= 1
 
+
     def set_position(self):
         
         self.survival = True
@@ -107,4 +137,5 @@ class Hero(pygame.sprite.Sprite):
 
 
 
-
+sprites = pygame.sprite.Group()
+weapons = pygame.sprite.Group()

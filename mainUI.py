@@ -3,7 +3,9 @@ import tkinter.messagebox
 import Background as bg
 import Hero
 import Enemies
-
+from Hero import sprites
+from Hero import weapons
+import weapon
 
 class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
@@ -144,10 +146,13 @@ class main(object):
         # move background
         self.bg_group.update()
         self.bg_group.draw(window)
+        self.hero.shoot()
         # move hero
         if self.hero.survival:
             self.hero.hero_move()
             window.blit(self.hero.plane, self.hero.rect)
+            # sprites.update()
+            sprites.draw(window)
         # move pawn enemies
         for pawn in self.pawn_enemies:
             if pawn.survival:
@@ -185,6 +190,10 @@ class main(object):
         if enemies_down:
             for enemy in enemies_down:
                 enemy.survival = False
+
+        pygame.sprite.groupcollide(self.pawn_enemies, weapons, True, False)
+        #pygame.sprite.groupcollide(self.office_enemies,weapons,True,False)
+
 
 
     ####Below initialize the GUI (Before LOOP)#####
