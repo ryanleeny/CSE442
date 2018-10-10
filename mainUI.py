@@ -162,6 +162,12 @@ class main(object):
                 if event.type == Enemies.CREATE_PAWN_EVENT:
                     Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies)
 
+    def __check_collide(self):
+        enemies_down = pygame.sprite.spritecollide(self.hero, self.enemies, False, pygame.sprite.collide_mask)
+        if enemies_down:
+            for enemy in enemies_down:
+                enemy.survival = False
+
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
         global z, FPS, z2
@@ -169,7 +175,8 @@ class main(object):
         z2 = z
         FPS = 60
         # default create pawn enemy time 1500ms, will change during the score up
-        create_pawn_time = 1500
+        create_pawn_time = 1000
+        # init sprites_group
         self.__create_sprites_group()
         # set create pawn timer
         pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
@@ -205,8 +212,11 @@ class main(object):
             pygame.mouse.set_visible(False)
 
             if gaming_flag:
-                # function for update screen
+                # music control
                 pygame.mixer.music.stop()
+                # check collision
+                self.__check_collide()
+                # function for update screen
                 self.__update_sprites()
 
             elif setting_flag:
