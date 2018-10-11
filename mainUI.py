@@ -3,7 +3,9 @@ import tkinter.messagebox
 import Background as bg
 import Hero
 import Enemies
-
+from Hero import sprites
+from Hero import weapons
+import weapon
 
 class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
@@ -138,20 +140,39 @@ class main(object):
         self.hero = Hero.Hero(self.SCREEN_RECT)
         self.enemies = pygame.sprite.Group()
         self.pawn_enemies = pygame.sprite.Group()
+        self.office_enemies = pygame.sprite.Group()
 
     def __update_sprites(self):
         # move background
         self.bg_group.update()
         self.bg_group.draw(window)
+        self.hero.shoot()
         # move hero
         if self.hero.survival:
             self.hero.hero_move()
             window.blit(self.hero.plane, self.hero.rect)
+            # sprites.update()
+            sprites.draw(window)
         # move pawn enemies
         for pawn in self.pawn_enemies:
             if pawn.survival:
                 pawn.move()
                 window.blit(pawn.pawn, pawn.rect)
+        for officer in self.office_enemies:
+            if officer.survival:
+                officer.move()
+                if officer.hit:
+                    pass
+                else:
+                    window.blit(officer.officer, officer.rect)
+                # get the blood bar
+                draw_bar_start = (officer.rect.left, officer.rect.top - 5)
+                draw_bar_end = (officer.rect.right, officer.rect.top - 5)
+                pygame.draw.line(window, (255, 0, 0), draw_bar_start, draw_bar_end, 2)
+                # get the actual
+                actual_blood = officer.hp / Enemies.Officer.hp
+                draw_bar_end = (officer.rect.left + officer.rect.width * actual_blood, officer.rect.top - 5)
+                pygame.draw.line(window, (0, 255, 0), draw_bar_start, draw_bar_end, 2)
 
     def __event_handler(self):
         for event in pygame.event.get():
@@ -161,6 +182,8 @@ class main(object):
             elif gaming_flag:
                 if event.type == Enemies.CREATE_PAWN_EVENT:
                     Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies)
+                elif event.type == Enemies.CREATE_OFFICER_EVENT:
+                    Enemies.add_enemies("officer", self.SCREEN_RECT, self.office_enemies, self.enemies)
 
     def __check_collide(self):
         enemies_down = pygame.sprite.spritecollide(self.hero, self.enemies, False, pygame.sprite.collide_mask)
@@ -168,18 +191,28 @@ class main(object):
             for enemy in enemies_down:
                 enemy.survival = False
 
+        pygame.sprite.groupcollide(self.pawn_enemies, weapons, True, False)
+        #pygame.sprite.groupcollide(self.office_enemies,weapons,True,False)
+
+
+
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
         global z, FPS, z2
         z = 180
         z2 = z
         FPS = 60
-        # default create pawn enemy time 1500ms, will change during the score up
+        # default create pawn enemy time 1000ms, will change during the score up
         create_pawn_time = 1000
+        # default create office enemy time 5000ms, will change during the score up
+        create_office_time = 5000
         # init sprites_group
         self.__create_sprites_group()
         # set create pawn timer
         pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
+        # set create officer timer
+        pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
+
 
         ####Play background music####
         pygame.mixer.music.load('music/Power Bots Loop.wav')  # load the music
