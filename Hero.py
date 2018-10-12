@@ -103,7 +103,7 @@ class Hero(pygame.sprite.Sprite):
     def hero_move(self):
         # get_input from keyboard
         key_pressed = pygame.key.get_pressed()
-        #
+        
         if key_pressed[K_UP]:
             self.__move_up()
         if key_pressed[K_DOWN]:
@@ -125,7 +125,7 @@ class Hero(pygame.sprite.Sprite):
         if self.counter == 0:
             self.switch = not self.switch
             self.counter = 3
-        # 计数器计数
+        # count down
         self.counter -= 1
 
 
