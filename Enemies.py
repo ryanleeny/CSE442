@@ -1,9 +1,9 @@
 import pygame
 import random
 
-CREATE_PAWN_EVENT = pygame.USEREVENT
+CREATE_PAWN_EVENT = pygame.USEREVENT + 1
 
-CREATE_OFFICER_EVENT = pygame.USEREVENT + 1
+CREATE_OFFICER_EVENT = pygame.USEREVENT + 2
 
 
 class Pawn(pygame.sprite.Sprite):
