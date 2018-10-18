@@ -1,10 +1,7 @@
 import pygame
-import tkinter.messagebox
 import Background as bg
 import Hero
 import Enemies
-from Hero import sprites
-from Hero import weapons
 import weapon
 
 class Button(object):
@@ -106,9 +103,14 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
+<<<<<<< HEAD
     global black, white, green, red, gold, blue, yellow, game_score, home, background, background2, background3, fps, \
         voice_col, voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, \
         setting_flag, sound_on, background4, game_over
+=======
+    global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
+        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on
+>>>>>>> 7358b48f8d3314c84fb06d12d630e2b23e473581
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -119,7 +121,7 @@ class main(object):
     width = 401  # Window width
     height = 700  # Window height
     SCREEN_RECT = pygame.Rect(0, 0, width, height)
-    game_score = 0  # score to display in the screen
+    game_record = 0  # score to display in the screen
     background = pygame.image.load('./images/background.jpeg')
     background2 = pygame.image.load('./images/bg2.jpeg')
     background3 = pygame.image.load('./images/bg3.jpg')
@@ -136,6 +138,10 @@ class main(object):
     setting_flag = False
     home_flag = True
     game_over = False
+
+    global pawn_score, officer_score
+    pawn_score = 10
+    officer_score = 50
 
     ####Unuse Declaration#####
     x = width * 1  # x and y is the position of background img
@@ -155,22 +161,37 @@ class main(object):
         self.pawn_enemies = pygame.sprite.Group()
         self.office_enemies = pygame.sprite.Group()
 
+    def __update_score(self):
+
+        score_text = self.Score_text.render("Score : %s" % str(self.game_score), True, white)
+        window.blit(score_text, (10, 5))
+
     def __update_sprites(self):
         # move background
         self.bg_group.update()
         self.bg_group.draw(window)
-        self.hero.shoot()
+
         # move hero
         if self.hero.survival:
             self.hero.hero_move()
             window.blit(self.hero.plane, self.hero.rect)
-            # sprites.update()
-            sprites.draw(window)
+
+        for bullet in self.hero.weapons:
+            if bullet.survival:
+                bullet.update()
+                window.blit(bullet.image, bullet.rect)
+            else:
+                bullet.kill()
+
         # move pawn enemies
         for pawn in self.pawn_enemies:
             if pawn.survival:
                 pawn.move()
                 window.blit(pawn.pawn, pawn.rect)
+            else:
+                self.game_score += pawn_score
+                pawn.kill()
+
         for officer in self.office_enemies:
             if officer.survival:
                 officer.move()
@@ -186,6 +207,9 @@ class main(object):
                 actual_blood = officer.hp / Enemies.Officer.hp
                 draw_bar_end = (officer.rect.left + officer.rect.width * actual_blood, officer.rect.top - 5)
                 pygame.draw.line(window, (0, 255, 0), draw_bar_start, draw_bar_end, 2)
+            else:
+                self.game_score += officer_score
+                officer.kill()
 
     def __event_handler(self):
         for event in pygame.event.get():
@@ -197,16 +221,29 @@ class main(object):
                     Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies)
                 elif event.type == Enemies.CREATE_OFFICER_EVENT:
                     Enemies.add_enemies("officer", self.SCREEN_RECT, self.office_enemies, self.enemies)
+                elif event.type == Hero.HERO_SHOOT_EVENT:
+                    self.hero.shoot()
 
     def __check_collide(self):
         enemies_down = pygame.sprite.spritecollide(self.hero, self.enemies, False, pygame.sprite.collide_mask)
+
         if enemies_down:
             for enemy in enemies_down:
                 enemy.survival = False
 
-        pygame.sprite.groupcollide(self.pawn_enemies, weapons, True, False)
-        #pygame.sprite.groupcollide(self.office_enemies,weapons,True,False)
+        for bullet in self.hero.weapons:
+            enemy_hit = pygame.sprite.spritecollide(bullet, self.enemies, False, pygame.sprite.collide_mask)
+            if enemy_hit:
+                bullet.survival = False
 
+                for enemy in enemy_hit:
+                    if enemy in self.office_enemies:
+                        enemy.hp -= 1
+                        if enemy.hp == 0:
+                            enemy.survival = False
+
+                    if enemy in self.pawn_enemies:
+                        enemy.survival = False
 
 
     ####Below initialize the GUI (Before LOOP)#####
@@ -219,19 +256,33 @@ class main(object):
         create_pawn_time = 1000
         # default create office enemy time 5000ms, will change during the score up
         create_office_time = 5000
+        # hero shoot time
+        hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
         # init sprites_group
         self.__create_sprites_group()
         # set create pawn timer
         pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
         # set create officer timer
         pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
-
+        # set shoot timer
+        pygame.time.set_timer(Hero.HERO_SHOOT_EVENT, hero_shoot_fre)
 
         ####Play background music####
         pygame.mixer.music.load('music/Power Bots Loop.wav')  # load the music
+<<<<<<< HEAD
         pygame.mixer.music.play(-1)  # -1 means infinity play
         #pygame.mixer.music.queue('next.mp3') #second music
         pygame.mixer.music.set_volume((z - 80) / 220) #volume of music
+=======
+        pygame.mixer.music.play(-1)  # -1 means unlimit play
+        # pygame.mixer.music.queue('next.mp3') #second music
+        pygame.mixer.music.set_volume((z - 80) / 220)
+        # creating font object
+        self.Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)
+        # in game score
+        self.game_score = 0
+
+>>>>>>> 7358b48f8d3314c84fb06d12d630e2b23e473581
 
         # ###main loop of the GUI#### #
         game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
@@ -263,6 +314,8 @@ class main(object):
                 self.__check_collide()
                 # function for update screen
                 self.__update_sprites()
+                # function for update score display
+                self.__update_score()
 
                 #if k_press[pygame.K_ESCAPE]:
                     #window.blit(background4, (x, y))
@@ -337,8 +390,8 @@ class main(object):
                     z = z2
 
                 ####coins_Display#####
-                Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)  # creating font object
-                textSurf, Score = text_objects("score: %d" % game_score, Score_text)  # Using the font object
+                # Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)  # creating font object
+                textSurf, Score = text_objects("Highest Score: %d" % game_record, self.Score_text)  # Using the font object
                 Score.center = (200, 140)  # location of font object
                 window.blit(textSurf, Score)  # putting the font object in Window panel
 

@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 import weapon
 
+HERO_SHOOT_EVENT = pygame.USEREVENT
+
 
 class Hero(pygame.sprite.Sprite):
 
@@ -51,6 +53,8 @@ class Hero(pygame.sprite.Sprite):
         self.speed = 5
         # survival
         self.survival = True
+        # weapon
+        self.weapons = pygame.sprite.Group()
 
     def __move_up(self):
         if self.rect.top < 0:
@@ -77,27 +81,12 @@ class Hero(pygame.sprite.Sprite):
             self.rect.right += self.speed
 
 ############################################################
-    def newbullet(self):
-        global newweapon
-        newweapon = weapon.Weapon(self.rect.centerx, self.rect.top)
-
-    global shootflag
-    shootflag = True
 
     def shoot(self):
-        global shootflag
 
-        if (shootflag == True):
-            self.newbullet()
-            shootflag = False
+        new_weapon = weapon.Weapon(self.rect.centerx, self.rect.top)
 
-        if (newweapon.freqency_count == 0):
-            shootflag = True
-            newweapon.freqency_count = newweapon.freqency
-        sprites.add(newweapon)
-        weapons.add(newweapon)
-        sprites.update()
-        newweapon.freqency_count -= 1
+        self.weapons.add(new_weapon)
 
 ############################################################
     def hero_move(self):
@@ -114,8 +103,12 @@ class Hero(pygame.sprite.Sprite):
             self.__move_right()
         if key_pressed[K_1]:
             weapon.Weapon.weapon_choice = 0
+            hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
+            pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
         if key_pressed[K_2]:
             weapon.Weapon.weapon_choice = 1
+            hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
+            pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
         # change plane photo
         if self.switch:
             self.plane = self.plane1
@@ -136,6 +129,3 @@ class Hero(pygame.sprite.Sprite):
         self.rect.bottom = self.background_rect.bottom - 60
 
 
-
-sprites = pygame.sprite.Group()
-weapons = pygame.sprite.Group()
