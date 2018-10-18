@@ -250,6 +250,8 @@ class main(object):
         while game_loop:
             self.__event_handler()
 
+
+            # init sprites_group
             # ####Add Keyboard press detection##### #
             k_press = pygame.key.get_pressed()
             # ####Add Mouse press detection and get position of mouse##### #

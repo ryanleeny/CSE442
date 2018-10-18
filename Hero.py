@@ -1,9 +1,9 @@
 import pygame
 from pygame.locals import *
 import weapon
+import mainUI
 
 HERO_SHOOT_EVENT = pygame.USEREVENT
-
 
 class Hero(pygame.sprite.Sprite):
 
@@ -103,8 +103,16 @@ class Hero(pygame.sprite.Sprite):
             self.__move_right()
         if key_pressed[K_1]:
             weapon.Weapon.weapon_choice = 0
+            hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
+            pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
         if key_pressed[K_2]:
             weapon.Weapon.weapon_choice = 1
+            hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
+            pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
+        if key_pressed[K_3]:
+            weapon.Weapon.weapon_choice = 2
+            hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
+            pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
         # change plane photo
         if self.switch:
             self.plane = self.plane1
