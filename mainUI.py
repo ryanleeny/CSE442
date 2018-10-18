@@ -19,11 +19,13 @@ class Button(object):
                     sixty_flag = False
 
                 if action == "30":
+
                     fifteen_flag = False
                     thirty_flag = True
                     sixty_flag = False
 
                 if action == "60":
+
                     fifteen_flag = False
                     thirty_flag = False
                     sixty_flag = True
@@ -34,7 +36,7 @@ class Button(object):
                     home_flag = True
 
                 if action == "setting":
-                    # print("Setting Button Clicked")
+                    #print("Setting Button Clicked")
                     gaming_flag = False
                     setting_flag = True
                     home_flag = False
@@ -48,7 +50,6 @@ class Button(object):
                 if action == "quit":
                     pygame.quit()
                     quit()
-
         else:
             pygame.draw.rect(window, inactive_color, (x, y, width, height))
         Button.text_to_button(text, black, x, y, width, height)
@@ -71,17 +72,6 @@ class Button(object):
         return textSurface, textSurface.get_rect()
 
 
-class gameover(object):
-    @staticmethod
-    def finish():
-        myfont1 = pygame.font.Font(None, 60)
-        text1 = myfont1.render("GAME OVER", True, red)
-        window.blit(text1, (80, 140))
-
-        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
-        Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
-
-
 class Setting(object):
     @staticmethod
     def option():
@@ -90,9 +80,9 @@ class Setting(object):
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
         window.blit(fps, (55, 380))
-        Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
-        Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
-        Button.button("90", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
+        Button.button("15", 190, 380, 100, 50, gold, (255, 255, 255), action="15")
+        Button.button("30", 190, 450, 100, 50, gold, (255, 255, 255), action="30")
+        Button.button("60", 190, 520, 100, 50, gold, (255, 255, 255), action="60")
         Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
         window.blit(home, (350, 652))
 
@@ -103,14 +93,8 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
-<<<<<<< HEAD
-    global black, white, green, red, gold, blue, yellow, game_score, home, background, background2, background3, fps, \
-        voice_col, voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, \
-        setting_flag, sound_on, background4, game_over
-=======
     global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on
->>>>>>> 7358b48f8d3314c84fb06d12d630e2b23e473581
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -125,7 +109,6 @@ class main(object):
     background = pygame.image.load('./images/background.jpeg')
     background2 = pygame.image.load('./images/bg2.jpeg')
     background3 = pygame.image.load('./images/bg3.jpg')
-    background4 = pygame.image.load('./images/bg4.jpg')
     cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
     voice_low = pygame.image.load('./images/vl.png')
     voice_high = pygame.image.load('./images/vh.png')
@@ -137,7 +120,6 @@ class main(object):
     gaming_flag = False
     setting_flag = False
     home_flag = True
-    game_over = False
 
     global pawn_score, officer_score
     pawn_score = 10
@@ -269,11 +251,6 @@ class main(object):
 
         ####Play background music####
         pygame.mixer.music.load('music/Power Bots Loop.wav')  # load the music
-<<<<<<< HEAD
-        pygame.mixer.music.play(-1)  # -1 means infinity play
-        #pygame.mixer.music.queue('next.mp3') #second music
-        pygame.mixer.music.set_volume((z - 80) / 220) #volume of music
-=======
         pygame.mixer.music.play(-1)  # -1 means unlimit play
         # pygame.mixer.music.queue('next.mp3') #second music
         pygame.mixer.music.set_volume((z - 80) / 220)
@@ -282,7 +259,6 @@ class main(object):
         # in game score
         self.game_score = 0
 
->>>>>>> 7358b48f8d3314c84fb06d12d630e2b23e473581
 
         # ###main loop of the GUI#### #
         game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
@@ -309,7 +285,8 @@ class main(object):
             pygame.mouse.set_visible(False)
 
             if gaming_flag:
-                pygame.mixer.music.pause() #turn off the background music
+                # music control
+                pygame.mixer.music.stop()
                 # check collision
                 self.__check_collide()
                 # function for update screen
@@ -317,26 +294,10 @@ class main(object):
                 # function for update score display
                 self.__update_score()
 
-                #if k_press[pygame.K_ESCAPE]:
-                    #window.blit(background4, (x, y))
-                    #gameover.finish()
-                    #####draw the mouse here so is on top of everything else#####
-                    #window.blit(cursor1, (mx, my))
-
-
-            elif game_over:
-                window.blit(background4, (x, y))
-                pygame.mixer.music.unpause()
-                gameover.finish()
-
-                #####draw the mouse here so is on top of everything else#####
-                window.blit(cursor1, (mx, my))
-
-
             elif setting_flag:
                 window.blit(background2, (x, y)) #set up the background
                 Setting.option()  #branch to function named option() from class setting
-                pygame.mixer.music.unpause() #resume paused music
+                pygame.mixer.music.unpause()
 
                 ###---volume control---###
                 if z <= 80:
@@ -354,15 +315,15 @@ class main(object):
 
                 ###pfs###
                 if fifteen_flag:
-                    FPS = 30
+                    FPS = 15
                     fifteen_flag = False
                     continue
                 if thirty_flag:
-                    FPS = 60
+                    FPS = 30
                     thirty_flag = False
                     continue
                 if sixty_flag:
-                    FPS = 90
+                    FPS = 60
                     sixty_flag = False
                     continue
 
@@ -382,11 +343,11 @@ class main(object):
 
                 ####Mute button####
                 if (42 >= mouse[0] >= 0) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
-                    pygame.mixer.music.pause() #temporarily stop music playback
+                    pygame.mixer.music.pause()
                     z = 80
 
                 if (89 >= mouse[0] >= 46) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
-                    pygame.mixer.music.unpause() #resume paused music
+                    pygame.mixer.music.unpause()
                     z = z2
 
                 ####coins_Display#####
@@ -406,6 +367,6 @@ class main(object):
 if __name__ == '__main__':
     pygame.init()
     window = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("GALAGA")
+    pygame.display.set_caption("Galaga")
     clock = pygame.time.Clock()
     game = main()
