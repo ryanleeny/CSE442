@@ -9,6 +9,9 @@ bullet1 = [pygame.image.load("images/bullet1.png"),pygame.image.load("images/bul
 rocket = [pygame.image.load("images/rocket/shot_1.png"),pygame.image.load("images/rocket/shot_2.png"),pygame.image.load("images/rocket/shot_3.png"),pygame.image.load("images/rocket/shot_4.png"),pygame.image.load("images/rocket/shot_5.png"),pygame.image.load("images/rocket/shot_6.png"),pygame.image.load("images/rocket/shot_7.png")]
 weapon_frequency = [500, 150, 600]  #set how fast the bullet come out of the player in ms
 weapon_switched = False
+
+
+
 #initialzation of bullets
 class Weapon(pygame.sprite.Sprite):
     animate = 1   # begining index of the array
@@ -20,7 +23,7 @@ class Weapon(pygame.sprite.Sprite):
     weapon_timer =pygame.USEREVENT+3
     weapon_timer_choice = [0,40,200]
 
-    def __init__(self,x,y):
+    def __init__(self, x, y):
 
         pygame.sprite.Sprite.__init__(self)
         self.image = self.weapon_img[self.weapon_choice][0]
@@ -30,9 +33,11 @@ class Weapon(pygame.sprite.Sprite):
         self.speedy = self.weapon_speed[self.weapon_choice]
         self.frequency = weapon_frequency[self.weapon_choice]
         self.frequency_count = self.frequency
-        self.WEAPON_CHOICE = self.weapon_choice;
+        self.WEAPON_CHOICE = self.weapon_choice
         self.mask = pygame.mask.from_surface(self.image)
+
         self.image =pygame.Surface(self.image.get_size()).convert_alpha(self.image)
+        self.image = pygame.Surface((100, 100))
         # survival
         self.survival = True
         self.fire = False
@@ -47,6 +52,7 @@ class Weapon(pygame.sprite.Sprite):
      #update the next image display of the weapon array, the index are pointed by the variable self.animate above
     def change_img(self):
         self.image = self.weapon_img[self.WEAPON_CHOICE][self.animate//self.animation_speed[self.WEAPON_CHOICE]]
+        self.mask = pygame.mask.from_surface(self.image)
     #update the bullets class
     #special case
     def update(self):
@@ -58,7 +64,7 @@ class Weapon(pygame.sprite.Sprite):
         self.rect.y += self.weapon_speed[self.WEAPON_CHOICE]
         self.frequency_count -=1
         self.change_img()
-        if self.rect.bottom<0:
+        if self.rect.bottom < 0:
             self.kill()
         #longshot case
         if(self.WEAPON_CHOICE==2):

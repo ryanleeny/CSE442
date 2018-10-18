@@ -109,10 +109,12 @@ class Hero(pygame.sprite.Sprite):
             weapon.Weapon.weapon_choice = 1
             hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
             pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
+
         if key_pressed[K_3]:
             weapon.Weapon.weapon_choice = 2
             hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
             pygame.time.set_timer(HERO_SHOOT_EVENT, hero_shoot_fre)
+
         # change plane photo
         if self.switch:
             self.plane = self.plane1

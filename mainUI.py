@@ -1,5 +1,4 @@
 import pygame
-import tkinter.messagebox
 import Background as bg
 import Hero
 import Enemies
@@ -73,6 +72,17 @@ class Button(object):
         return textSurface, textSurface.get_rect()
 
 
+class gameover(object):
+    @staticmethod
+    def finish():
+        myfont = pygame.font.Font(None, 60)
+        text = myfont.render("GAME OVER", True, red)
+        window.blit(text, (80, 140))
+
+        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
+        Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
+
+
 class Setting(object):
     @staticmethod
     def option():
@@ -94,8 +104,9 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
-    global black, white, green, red, gold, blue, yellow, game_score, home, background, background2, background3, fps, voice_col,\
-        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on
+    global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
+        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
+        background4, game_over
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -106,10 +117,11 @@ class main(object):
     width = 401  # Window width
     height = 700  # Window height
     SCREEN_RECT = pygame.Rect(0, 0, width, height)
-    game_score = 0  # score to display in the screen
+    game_record = 0  # score to display in the screen
     background = pygame.image.load('./images/background.jpeg')
     background2 = pygame.image.load('./images/bg2.jpeg')
     background3 = pygame.image.load('./images/bg3.jpg')
+    background4 = pygame.image.load('./images/bg4.jpg')
     cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
     voice_low = pygame.image.load('./images/vl.png')
     voice_high = pygame.image.load('./images/vh.png')
@@ -118,9 +130,14 @@ class main(object):
     sound_on = pygame.image.load('./images/sb.png')
     home = pygame.image.load('./images/home.png')
     fps = pygame.image.load('./images/fps.png')
+    game_over = False
     gaming_flag = False
     setting_flag = False
     home_flag = True
+
+    global pawn_score, officer_score
+    pawn_score = 10
+    officer_score = 50
 
     ####Unuse Declaration#####
     x = width * 1  # x and y is the position of background img
@@ -139,6 +156,11 @@ class main(object):
         self.enemies = pygame.sprite.Group()
         self.pawn_enemies = pygame.sprite.Group()
         self.office_enemies = pygame.sprite.Group()
+
+    def __update_score(self):
+
+        score_text = self.Score_text.render("Score : %s" % str(self.game_score), True, white)
+        window.blit(score_text, (10, 5))
 
     def __update_sprites(self):
         # move background
@@ -163,7 +185,9 @@ class main(object):
                 pawn.move()
                 window.blit(pawn.pawn, pawn.rect)
             else:
+                self.game_score += pawn_score
                 pawn.kill()
+
         for officer in self.office_enemies:
             if officer.survival:
                 officer.move()
@@ -180,6 +204,7 @@ class main(object):
                 draw_bar_end = (officer.rect.left + officer.rect.width * actual_blood, officer.rect.top - 5)
                 pygame.draw.line(window, (0, 255, 0), draw_bar_start, draw_bar_end, 2)
             else:
+                self.game_score += officer_score
                 officer.kill()
 
     def __event_handler(self):
@@ -216,7 +241,6 @@ class main(object):
                     if enemy in self.pawn_enemies:
                         enemy.survival = False
 
-        #pygame.sprite.groupcollide(self.office_enemies,weapons,True,False)
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
@@ -244,6 +268,11 @@ class main(object):
         pygame.mixer.music.play(-1)  # -1 means unlimit play
         # pygame.mixer.music.queue('next.mp3') #second music
         pygame.mixer.music.set_volume((z - 80) / 220)
+        # creating font object
+        self.Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)
+        # in game score
+        self.game_score = 0
+
 
         # ###main loop of the GUI#### #
         game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
@@ -278,6 +307,16 @@ class main(object):
                 self.__check_collide()
                 # function for update screen
                 self.__update_sprites()
+                # function for update score display
+                self.__update_score()
+
+            elif game_over:
+                window.blit(background4, (x, y))
+                #pygame.mixer.music.unpause()
+                gameover.finish()
+
+                #####draw the mouse here so is on top of everything else#####
+                window.blit(cursor1, (mx, my))
 
             elif setting_flag:
                 window.blit(background2, (x, y)) #set up the background
@@ -336,8 +375,8 @@ class main(object):
                     z = z2
 
                 ####coins_Display#####
-                Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)  # creating font object
-                textSurf, Score = text_objects("score: %d" % game_score, Score_text)  # Using the font object
+                # Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)  # creating font object
+                textSurf, Score = text_objects("Highest Score: %d" % game_record, self.Score_text)  # Using the font object
                 Score.center = (200, 140)  # location of font object
                 window.blit(textSurf, Score)  # putting the font object in Window panel
 
