@@ -72,6 +72,17 @@ class Button(object):
         return textSurface, textSurface.get_rect()
 
 
+class gameover(object):
+    @staticmethod
+    def finish():
+        myfont = pygame.font.Font(None, 60)
+        text = myfont.render("GAME OVER", True, red)
+        window.blit(text, (80, 140))
+
+        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
+        Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
+
+
 class Setting(object):
     @staticmethod
     def option():
@@ -94,7 +105,8 @@ class main(object):
 
     #####global varaible declaration here#####
     global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
-        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on
+        voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
+        background4, game_over
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -109,6 +121,7 @@ class main(object):
     background = pygame.image.load('./images/background.jpeg')
     background2 = pygame.image.load('./images/bg2.jpeg')
     background3 = pygame.image.load('./images/bg3.jpg')
+    background4 = pygame.image.load('./images/bg4.jpg')
     cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
     voice_low = pygame.image.load('./images/vl.png')
     voice_high = pygame.image.load('./images/vh.png')
@@ -117,6 +130,7 @@ class main(object):
     sound_on = pygame.image.load('./images/sb.png')
     home = pygame.image.load('./images/home.png')
     fps = pygame.image.load('./images/fps.png')
+    game_over = False
     gaming_flag = False
     setting_flag = False
     home_flag = True
@@ -293,6 +307,14 @@ class main(object):
                 self.__update_sprites()
                 # function for update score display
                 self.__update_score()
+
+            elif game_over:
+                window.blit(background4, (x, y))
+                #pygame.mixer.music.unpause()
+                gameover.finish()
+
+                #####draw the mouse here so is on top of everything else#####
+                window.blit(cursor1, (mx, my))
 
             elif setting_flag:
                 window.blit(background2, (x, y)) #set up the background
