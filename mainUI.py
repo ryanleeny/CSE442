@@ -317,7 +317,7 @@ class main(object):
         global z, FPS, z2
         z = 180
         z2 = z
-        FPS = 20
+        FPS = 60
         # default create pawn enemy time 1000ms, will change during the score up
         create_pawn_time = 1000
         # default create office enemy time 5000ms, will change during the score up
