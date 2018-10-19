@@ -8,7 +8,7 @@ class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
         cur = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag
+        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, retry_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action is not None:
@@ -34,18 +34,33 @@ class Button(object):
                     gaming_flag = False
                     setting_flag = False
                     home_flag = True
+                    game_over = False
+                    retry_flag = False
+
 
                 if action == "setting":
                     #print("Setting Button Clicked")
                     gaming_flag = False
                     setting_flag = True
                     home_flag = False
+                    game_over = False
+                    retry_flag = False
 
                 if action == "play":
                     #print("Play Button Click, go to gameLoop")
                     gaming_flag = True
                     setting_flag = False
                     home_flag = False
+                    game_over = False
+                    retry_flag = False
+
+                if action == "retry":
+                    gaming_flag = False
+                    setting_flag = False
+                    home_flag = False
+                    game_over = False
+                    retry_flag = True
+
 
                 if action == "quit":
                     pygame.quit()
@@ -79,7 +94,7 @@ class gameover(object):
         text = myfont.render("GAME OVER", True, red)
         window.blit(text, (80, 140))
 
-        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
+        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="retry")
         Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
 
 
@@ -106,7 +121,7 @@ class main(object):
     #####global varaible declaration here#####
     global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
-        background4, game_over
+        background4, game_over, retry_flag
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -134,6 +149,7 @@ class main(object):
     gaming_flag = False
     setting_flag = False
     home_flag = True
+    retry_flag = False
 
     global pawn_score, officer_score
     pawn_score = 10
@@ -171,6 +187,11 @@ class main(object):
         if self.hero.survival:
             self.hero.hero_move()
             window.blit(self.hero.plane, self.hero.rect)
+        else:
+            global game_over, gaming_flag
+            self.hero.kill()
+            gaming_flag = False
+            game_over = True
 
         for bullet in self.hero.weapons:
             if bullet.survival:
@@ -224,6 +245,7 @@ class main(object):
         enemies_down = pygame.sprite.spritecollide(self.hero, self.enemies, False, pygame.sprite.collide_mask)
 
         if enemies_down:
+            self.hero.survival = False
             for enemy in enemies_down:
                 enemy.survival = False
 
@@ -240,6 +262,22 @@ class main(object):
 
                     if enemy in self.pawn_enemies:
                         enemy.survival = False
+
+    def __refresh_game(self):
+        # kill all elements for gaming
+        self.pawn_enemies.empty()
+        self.office_enemies.empty()
+        self.enemies.empty()
+        self.hero.weapons.empty()
+
+        # reset game
+        self.hero.set_position()
+        self.game_score = 0
+
+        # reset bg position
+        for back_g in self.bg_group:
+
+            back_g.set_position()
 
 
     ####Below initialize the GUI (Before LOOP)#####
@@ -288,7 +326,7 @@ class main(object):
             mouse = pygame.mouse.get_pos()
 
             # ####add backcground moving alone with mouse#### #
-            global x, y, fifteen_flag, thirty_flag, sixty_flag
+            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
             fifteen_flag = False #fps#
@@ -311,12 +349,20 @@ class main(object):
                 self.__update_score()
 
             elif game_over:
+
                 window.blit(background4, (x, y))
                 #pygame.mixer.music.unpause()
                 gameover.finish()
 
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
+
+                if retry_flag:
+
+                    retry_flag = False
+                    gaming_flag = True
+
+                    self.__refresh_game()
 
             elif setting_flag:
                 window.blit(background2, (x, y)) #set up the background
