@@ -13,18 +13,18 @@ class Button(object):
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action is not None:
 
-                if action == "15":
+                if action == "30":
                     fifteen_flag = True
                     thirty_flag = False
                     sixty_flag = False
 
-                if action == "30":
+                if action == "60":
 
                     fifteen_flag = False
                     thirty_flag = True
                     sixty_flag = False
 
-                if action == "60":
+                if action == "90":
 
                     fifteen_flag = False
                     thirty_flag = False
@@ -106,9 +106,9 @@ class Setting(object):
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
         window.blit(fps, (55, 380))
-        Button.button("15", 190, 380, 100, 50, gold, (255, 255, 255), action="15")
-        Button.button("30", 190, 450, 100, 50, gold, (255, 255, 255), action="30")
-        Button.button("60", 190, 520, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
+        Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("90", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
         Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
         window.blit(home, (350, 652))
 
@@ -421,18 +421,18 @@ class main(object):
 
                 ###pfs###
                 if fifteen_flag:
-                    FPS = 15
+                    FPS = 30
                     fifteen_flag = False
                     continue
                 if thirty_flag:
-                    FPS = 30
+                    FPS = 60
                     thirty_flag = False
                     continue
                 if sixty_flag:
-                    FPS = 60
+                    FPS = 90
                     sixty_flag = False
                     continue
-
+                print(FPS)
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
 
