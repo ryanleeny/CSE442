@@ -21,7 +21,7 @@ class Weapon(pygame.sprite.Sprite):
     weapon_speed = [-10, -5,0] #how fast the bullets are moving, the entry index are associated to the same index of the weapons array
     animation_speed = [3, 15,15] # how much pixls the bullets move up every refresh, here the bigger negative the faster bullets move
     weapon_timer = pygame.USEREVENT + 3
-    weapon_timer_choice = [0, 60, 200]
+    weapon_timer_choice = [0, 120, 200]
 
     def __init__(self, x, y):
 
