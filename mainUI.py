@@ -151,9 +151,10 @@ class main(object):
     home_flag = True
     retry_flag = False
 
-    global pawn_score, officer_score
+    global pawn_score, officer_score, mid_boss_score
     pawn_score = 10
     officer_score = 50
+    mid_boss_score = 100
 
     ####Unuse Declaration#####
     x = width * 1  # x and y is the position of background img
@@ -172,6 +173,7 @@ class main(object):
         self.enemies = pygame.sprite.Group()
         self.pawn_enemies = pygame.sprite.Group()
         self.office_enemies = pygame.sprite.Group()
+        self.mid_boss_enemies = pygame.sprite.Group()
 
     def __update_score(self):
 
@@ -227,6 +229,27 @@ class main(object):
             else:
                 self.game_score += officer_score
                 officer.kill()
+        
+        for mid_boss in self.mid_boss_enemies:
+            print("mid boss check")
+            if mid_boss.survival:
+                mid_boss.move()
+                if mid_boss.hit:
+                    pass
+                else:
+                    window.blit(mid_boss.mid_boss, mid_boss.rect)
+                # get the blood bar
+                draw_bar_start = (mid_boss.rect.left, mid_boss.rect.top - 5)
+                draw_bar_end = (mid_boss.rect.right, mid_boss.rect.top - 5)
+                pygame.draw.line(window, (255, 0, 0), draw_bar_start, draw_bar_end, 2)
+                # get the actual
+                actual_blood = mid_boss.hp / Enemies.Mid_boss.hp
+                draw_bar_end = (mid_boss.rect.left + mid_boss.rect.width * actual_blood, mid_boss.rect.top - 5)
+                pygame.draw.line(window, (0, 255, 0), draw_bar_start, draw_bar_end, 2)
+            else:
+                self.game_score += mid_boss_score
+                mid_boss.kill()
+        
 
     def __event_handler(self):
         for event in pygame.event.get():
@@ -238,6 +261,8 @@ class main(object):
                     Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies)
                 elif event.type == Enemies.CREATE_OFFICER_EVENT:
                     Enemies.add_enemies("officer", self.SCREEN_RECT, self.office_enemies, self.enemies)
+                elif event.type == Enemies.CREATE_MID_BOSS_EVEN:
+                    Enemies.add_enemies("mid_boss", self.SCREEN_RECT, self.mid_boss_enemies, self.enemies)
                 elif event.type == Hero.HERO_SHOOT_EVENT:
                     self.hero.shoot()
 
@@ -263,10 +288,17 @@ class main(object):
                     if enemy in self.pawn_enemies:
                         enemy.survival = False
 
+                    if enemy in self.mid_boss_enemies:
+                        enemy.hp -= 1
+                        if enemy.hp == 0:
+                            enemy.survival = False
+
+
     def __refresh_game(self):
         # kill all elements for gaming
         self.pawn_enemies.empty()
         self.office_enemies.empty()
+        self.mid_boss_enemies.empty()
         self.enemies.empty()
         self.hero.weapons.empty()
 
@@ -285,11 +317,13 @@ class main(object):
         global z, FPS, z2
         z = 180
         z2 = z
-        FPS = 60
+        FPS = 20
         # default create pawn enemy time 1000ms, will change during the score up
         create_pawn_time = 1000
         # default create office enemy time 5000ms, will change during the score up
         create_office_time = 5000
+        # default create office enemy time 5000ms, will change during the score up
+        create_mid_boss_time = 10000
         # hero shoot time
         hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
         # init sprites_group
@@ -298,6 +332,8 @@ class main(object):
         pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
         # set create officer timer
         pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
+        # set create officer timer
+        pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
         # set shoot timer
         pygame.time.set_timer(Hero.HERO_SHOOT_EVENT, hero_shoot_fre)
 
