@@ -106,9 +106,9 @@ class Setting(object):
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
         window.blit(fps, (55, 380))
-        Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="15")
-        Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="30")
-        Button.button("90", 190, 520, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
+        Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("90", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
         Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
         window.blit(home, (350, 652))
 
@@ -396,7 +396,7 @@ class main(object):
                     FPS = 90
                     sixty_flag = False
                     continue
-
+                print(FPS)
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
 
