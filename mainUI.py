@@ -314,7 +314,8 @@ class main(object):
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z, FPS, z2
+        global z, FPS, z2, i
+        i = 1
         z = 180
         z2 = z
         FPS = 60
@@ -338,7 +339,7 @@ class main(object):
         pygame.time.set_timer(Hero.HERO_SHOOT_EVENT, hero_shoot_fre)
 
         ####Play background music####
-        pygame.mixer.music.load('music/Power Bots Loop.wav')  # load the music
+        pygame.mixer.music.load('music/Tech Inc1 Loop.wav')  # load the music
         pygame.mixer.music.play(-1)  # -1 means unlimit play
         # pygame.mixer.music.queue('next.mp3') #second music
         pygame.mixer.music.set_volume((z - 80) / 220)
@@ -375,8 +376,12 @@ class main(object):
             pygame.mouse.set_visible(False)
 
             if gaming_flag:
-                # music control
-                pygame.mixer.music.stop()
+                # load the background music for game
+                if i == 1:
+                    pygame.mixer.music.load('music/Defense Line.mp3')
+                    pygame.mixer.music.play(-1)
+                    i = i + 1
+
                 # check collision
                 self.__check_collide()
                 # function for update screen
@@ -385,9 +390,13 @@ class main(object):
                 self.__update_score()
 
             elif game_over:
+                # background music back to main music
+                if i == 2:
+                    pygame.mixer.music.load('music/Tech Inc1 Loop.wav')
+                    pygame.mixer.music.play(-1)
+                    i = i - 1
 
                 window.blit(background4, (x, y))
-                #pygame.mixer.music.unpause()
                 gameover.finish()
 
                 #####draw the mouse here so is on top of everything else#####
@@ -432,7 +441,7 @@ class main(object):
                     FPS = 90
                     sixty_flag = False
                     continue
-                print(FPS)
+
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
 
