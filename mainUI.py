@@ -113,7 +113,7 @@ class main(object):
     #####global varaible declaration here#####
     global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
-        background4, game_over, refresh_flag
+        background4, game_over, refresh_flag, highest_score
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -182,11 +182,17 @@ class main(object):
             self.hero.hero_move()
             window.blit(self.hero.plane, self.hero.rect)
         else:
-            global game_over, gaming_flag, refresh_flag
-            self.hero.kill()
+            global game_over, gaming_flag, refresh_flag, highest_score
+
             gaming_flag = False
             game_over = True
             refresh_flag = True
+
+            if self.game_score > highest_score:
+                with open("score.txt", "w") as f:
+                    f.write(str(self.game_score))
+                    f.close()
+                    highest_score = self.game_score
 
         for bullet in self.hero.weapons:
             if bullet.survival:
@@ -286,6 +292,7 @@ class main(object):
                             enemy.survival = False
 
     def __refresh_game(self):
+
         # kill all elements for gaming
         self.pawn_enemies.empty()
         self.office_enemies.empty()
@@ -302,10 +309,23 @@ class main(object):
 
             back_g.set_position()
 
+        # reset timer
+        # default create pawn enemy time 1000ms
+        create_pawn_time = 1000
+        # default create office enemy time 5000ms
+        create_office_time = 5000
+        # default create office enemy time 5000ms
+        create_mid_boss_time = 10000
+        # reset create pawn timer
+        pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
+        # reset create officer timer
+        pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
+        # reset create officer timer
+        pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z, FPS, z2, i
+        global z, FPS, z2, i, highest_score
         i = 1
         z = 180
         z2 = z
@@ -328,6 +348,10 @@ class main(object):
         pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
         # set shoot timer
         pygame.time.set_timer(Hero.HERO_SHOOT_EVENT, hero_shoot_fre)
+        # get highest score
+        with open("./score.txt", 'r') as f:
+            highest_score = int(f.read())
+            f.close()
 
         ####Play background music####
         pygame.mixer.music.load('music/Tech Inc1 Loop.wav')  # load the music
@@ -458,7 +482,7 @@ class main(object):
 
                 ####coins_Display#####
                 # Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)  # creating font object
-                textSurf, Score = text_objects("Highest Score: %d" % game_record, self.Score_text)  # Using the font object
+                textSurf, Score = text_objects("Highest Score: %d" % highest_score, self.Score_text)  # Using the font object
                 Score.center = (200, 140)  # location of font object
                 window.blit(textSurf, Score)  # putting the font object in Window panel
 
