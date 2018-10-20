@@ -8,7 +8,7 @@ class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
         cur = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, retry_flag
+        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action is not None:
@@ -35,7 +35,7 @@ class Button(object):
                     setting_flag = False
                     home_flag = True
                     game_over = False
-                    retry_flag = False
+                    refresh_flag = False
 
 
                 if action == "setting":
@@ -44,7 +44,7 @@ class Button(object):
                     setting_flag = True
                     home_flag = False
                     game_over = False
-                    retry_flag = False
+                    refresh_flag = False
 
                 if action == "play":
                     #print("Play Button Click, go to gameLoop")
@@ -52,15 +52,7 @@ class Button(object):
                     setting_flag = False
                     home_flag = False
                     game_over = False
-                    retry_flag = False
-
-                if action == "retry":
-                    gaming_flag = False
-                    setting_flag = False
-                    home_flag = False
-                    game_over = False
-                    retry_flag = True
-
+                    refresh_flag = False
 
                 if action == "quit":
                     pygame.quit()
@@ -94,7 +86,7 @@ class gameover(object):
         text = myfont.render("GAME OVER", True, red)
         window.blit(text, (80, 140))
 
-        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="retry")
+        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
         Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
 
 
@@ -121,7 +113,7 @@ class main(object):
     #####global varaible declaration here#####
     global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
-        background4, game_over, retry_flag
+        background4, game_over, refresh_flag
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -149,7 +141,7 @@ class main(object):
     gaming_flag = False
     setting_flag = False
     home_flag = True
-    retry_flag = False
+    refresh_flag = False
 
     global pawn_score, officer_score, mid_boss_score
     pawn_score = 10
@@ -190,10 +182,11 @@ class main(object):
             self.hero.hero_move()
             window.blit(self.hero.plane, self.hero.rect)
         else:
-            global game_over, gaming_flag
+            global game_over, gaming_flag, refresh_flag
             self.hero.kill()
             gaming_flag = False
             game_over = True
+            refresh_flag = True
 
         for bullet in self.hero.weapons:
             if bullet.survival:
@@ -231,7 +224,7 @@ class main(object):
                 officer.kill()
         
         for mid_boss in self.mid_boss_enemies:
-            print("mid boss check")
+
             if mid_boss.survival:
                 mid_boss.move()
                 if mid_boss.hit:
@@ -249,7 +242,6 @@ class main(object):
             else:
                 self.game_score += mid_boss_score
                 mid_boss.kill()
-        
 
     def __event_handler(self):
         for event in pygame.event.get():
@@ -292,7 +284,6 @@ class main(object):
                         enemy.hp -= 1
                         if enemy.hp == 0:
                             enemy.survival = False
-
 
     def __refresh_game(self):
         # kill all elements for gaming
@@ -401,11 +392,11 @@ class main(object):
 
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
+                global refresh_flag
 
-                if retry_flag:
+                if refresh_flag:
 
-                    retry_flag = False
-                    gaming_flag = True
+                    refresh_flag = False
 
                     self.__refresh_game()
 

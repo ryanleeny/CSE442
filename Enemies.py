@@ -112,8 +112,6 @@ class Officer(pygame.sprite.Sprite):
         self.rect.x = random.randint(0, max_x)
 
 
-
-
 class Mid_boss(pygame.sprite.Sprite):
 
     hp = 20
@@ -152,7 +150,7 @@ class Mid_boss(pygame.sprite.Sprite):
         self.death_spirits.extend([self.spirit1, self.spirit2, self.spirit3])
         '''
         # speed
-        self.speed = 4
+        self.speed = 2
         # survival
         self.survival = True
 
@@ -166,7 +164,6 @@ class Mid_boss(pygame.sprite.Sprite):
         self.rect.bottom = 0
         max_x = self.background_rect.width - self.rect.width
         self.rect.x = random.randint(0, max_x)
-
 
 
 def add_enemies(name, bg_size, group1, group2):
