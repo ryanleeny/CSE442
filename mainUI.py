@@ -474,10 +474,12 @@ class main(object):
                 ####Mute button####
                 if (42 >= mouse[0] >= 0) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
                     pygame.mixer.music.pause()
+                    i = 3
                     z = 80
 
                 if (89 >= mouse[0] >= 46) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
                     pygame.mixer.music.unpause()
+                    i = 1
                     z = z2
 
                 ####coins_Display#####
