@@ -97,6 +97,11 @@ class Setting(object):
         window.blit(voice_col, (z, 289))
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
+
+        myfont2 = pygame.font.Font(None, 30)
+        text2 = myfont2.render(str(z4), True, black)
+        window.blit(text2, (z, 270))
+
         window.blit(fps, (55, 380))
         Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
         Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
@@ -325,10 +330,12 @@ class main(object):
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z, FPS, z2, i, highest_score
+        global z, FPS, z2, z3, z4, i, highest_score
         i = 1
         z = 180
         z2 = z
+        z3 = (z - 80) * 100 / 220
+        z4 = int(z3)
         FPS = 60
         # default create pawn enemy time 1000ms, will change during the score up
         create_pawn_time = 1000
@@ -442,6 +449,8 @@ class main(object):
                     z = mouse[0] - 10
                 pygame.mixer.music.set_volume((z - 80) / 220)
                 z2 = z
+                z3 = (z - 80) * 100 / 220
+                z4 = int(z3)
 
                 ###pfs###
                 if fifteen_flag:
