@@ -103,9 +103,9 @@ class Setting(object):
         window.blit(text2, (z, 270))
 
         window.blit(fps, (55, 380))
-        Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
-        Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
-        Button.button("90", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
+        Button.button("30", 190, 380, 100, 50, col1, (255, 255, 255), action="30")
+        Button.button("60", 190, 450, 100, 50, col2, (255, 255, 255), action="60")
+        Button.button("90", 190, 520, 100, 50, col3, (255, 255, 255), action="90")
         Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
         window.blit(home, (350, 652))
 
@@ -330,13 +330,16 @@ class main(object):
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z, FPS, z2, z3, z4, i, highest_score
+        global z, FPS, z2, z3, z4, i, col1, col2, col3, highest_score
         i = 1
         z = 180
         z2 = z
         z3 = (z - 80) * 100 / 220
         z4 = int(z3)
         FPS = 60
+        col1 = col3 = gold
+        col2 = white
+
         # default create pawn enemy time 1000ms, will change during the score up
         create_pawn_time = 1000
         # default create office enemy time 5000ms, will change during the score up
@@ -455,14 +458,20 @@ class main(object):
                 ###pfs###
                 if fifteen_flag:
                     FPS = 30
+                    col1 = white
+                    col2 = col3 = gold
                     fifteen_flag = False
                     continue
                 if thirty_flag:
                     FPS = 60
+                    col2 = white
+                    col1 = col3 = gold
                     thirty_flag = False
                     continue
                 if sixty_flag:
                     FPS = 90
+                    col3 = white
+                    col2 = col1 = gold
                     sixty_flag = False
                     continue
 
