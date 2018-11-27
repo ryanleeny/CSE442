@@ -9,7 +9,11 @@ bullet1 = [pygame.image.load("images/bullet1.png"),pygame.image.load("images/bul
 rocket = [pygame.image.load("images/rocket/shot_1.png"),pygame.image.load("images/rocket/shot_2.png"),pygame.image.load("images/rocket/shot_3.png"),pygame.image.load("images/rocket/shot_4.png"),pygame.image.load("images/rocket/shot_5.png"),pygame.image.load("images/rocket/shot_6.png"),pygame.image.load("images/rocket/shot_7.png")]
 weapon_frequency = [500, 200, 1000]  #set how fast the bullet come out of the player in ms
 weapon_switched = False
-
+pygame.init()
+fire_sound = pygame.mixer.Sound("music/fire.wav")
+bullet_sound =pygame.mixer.Sound("music/Blaster-Ricochet.wav")
+laser_sound =pygame.mixer.Sound("music/blade2.wav")
+weapon_sound = [bullet_sound,fire_sound,laser_sound]
 
 
 #initialzation of bullets
@@ -42,6 +46,7 @@ class Weapon(pygame.sprite.Sprite):
         self.survival = True
         self.fire = False
         pygame.time.set_timer(self.weapon_timer, self.weapon_timer_choice[self.weapon_choice])
+        pygame.mixer.Sound.play(weapon_sound[self.weapon_choice])
      #this update the index in the weapon image array, but with modification of incrementing speed
     def check_animate(self):
             self.animate+=1
@@ -67,6 +72,8 @@ class Weapon(pygame.sprite.Sprite):
         self.change_img()
         if self.rect.bottom < 0:
             self.kill()
+
+
         #longshot case
         if self.WEAPON_CHOICE == 2:
 
@@ -79,6 +86,7 @@ class Weapon(pygame.sprite.Sprite):
                 self.rect.y += -10
                 self.image = self.image = pygame.image.load("images/longshot/shot_7.png")
                 self.mask = pygame.mask.from_surface(self.image)
+
         # longshot case
 
         if self.WEAPON_CHOICE == 1:

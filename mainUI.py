@@ -441,6 +441,7 @@ class main(object):
                 if (330 >= mouse[1] >= 295) and (310 >= mouse[0] >= 90) and (mouse_press[0] == True):
                     z = mouse[0] - 10
                 pygame.mixer.music.set_volume((z - 80) / 220)
+                pygame.mixer.Sound.set_volume(weapon.weapon_sound[weapon.weapon_choice],(z - 80) / 220)
                 z2 = z
 
                 ###pfs###
