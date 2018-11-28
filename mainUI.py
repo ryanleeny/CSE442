@@ -369,7 +369,12 @@ class main(object):
         game_loop = True  # ;This the the loop of the main game, FALSE to exit the loop
         while game_loop:
             self.__event_handler()
+            if (weapon.Weapon.weapon_choice == 1):
+                self.game_score -= 1
 
+            if (weapon.Weapon.weapon_choice == 2 and weapon.minus_score):
+                self.game_score -= 50
+            weapon.minus_score = False
 
             # init sprites_group
             # ####Add Keyboard press detection##### #
@@ -392,8 +397,7 @@ class main(object):
             pygame.mouse.set_visible(False)
 
             if gaming_flag:
-                if(weapon.Weapon.weapon_choice==1):
-                    self.game_score-=1
+
 
                 # load the background music for game
                 if i == 1:
@@ -499,6 +503,7 @@ class main(object):
             #####refresh everything#####
             clock.tick(FPS)
             pygame.display.update()
+
 
 
 if __name__ == '__main__':

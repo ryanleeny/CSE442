@@ -16,19 +16,18 @@ fire_sound = pygame.mixer.Sound("music/fire.wav")
 bullet_sound =pygame.mixer.Sound("music/Blaster-Ricochet.wav")
 laser_sound =pygame.mixer.Sound("music/blade2.wav")
 weapon_sound = [bullet_sound,fire_sound,laser_sound]
-
+minus_score = False
 
 #initialzation of bullets
 class Weapon(pygame.sprite.Sprite):
     animate = 1   # begining index of the array
     path = [0,animate**4]  #not use
-    weapon_choice = 1   # which weapon are choosen, index of the weapons array
+    weapon_choice = 0   # which weapon are choosen, index of the weapons array
     weapon_img = [bullet1,rocket,longshot,] #weapons array
     weapon_speed = [-10, -5,0] #how fast the bullets are moving, the entry index are associated to the same index of the weapons array
     animation_speed = [3, 15,15] # how much pixls the bullets move up every refresh, here the bigger negative the faster bullets move
     weapon_timer = pygame.USEREVENT + 3
     weapon_timer_choice = [0, 120, 200]
-
     def __init__(self, x, y):
 
         pygame.sprite.Sprite.__init__(self)
@@ -49,6 +48,7 @@ class Weapon(pygame.sprite.Sprite):
         self.fire = False
         pygame.time.set_timer(self.weapon_timer, self.weapon_timer_choice[self.weapon_choice])
         pygame.mixer.Sound.play(weapon_sound[self.weapon_choice])
+
      #this update the index in the weapon image array, but with modification of incrementing speed
     def check_animate(self):
             self.animate+=1
@@ -63,7 +63,7 @@ class Weapon(pygame.sprite.Sprite):
     #update the bullets class
     #special case
     def update(self):
-
+        global minus_score
         # if(weapon_switched==True):
         #     clear_bullet(self)
 
@@ -83,13 +83,14 @@ class Weapon(pygame.sprite.Sprite):
             self.rect.centerx += rannum
             if pygame.event.get(self.weapon_timer):
                 self.fire = True
-
+                minus_score = True
             if self.fire == True:
                 self.rect.y += -10
                 self.image = self.image = pygame.image.load("images/longshot/shot_7.png")
                 self.mask = pygame.mask.from_surface(self.image)
 
-        # longshot case
+
+
 
         if self.WEAPON_CHOICE == 1:
             if pygame.event.get(self.weapon_timer):
