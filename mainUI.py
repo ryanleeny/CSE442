@@ -392,6 +392,9 @@ class main(object):
             pygame.mouse.set_visible(False)
 
             if gaming_flag:
+                if(weapon.Weapon.weapon_choice==1):
+                    self.game_score-=1
+
                 # load the background music for game
                 if i == 1:
                     pygame.mixer.music.load('music/Defense Line.mp3')
