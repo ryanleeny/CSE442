@@ -3,6 +3,8 @@ import Hero
 from os import path
 import weapon
 import random
+import mainUI
+
 # load the bullets image into array
 longshot =[pygame.image.load("images/longshot/shot_1.png"),pygame.image.load("images/longshot/shot_2.png"),pygame.image.load("images/longshot/shot_3.png"),pygame.image.load("images/longshot/shot_4.png"),pygame.image.load("images/longshot/shot_5.png"),pygame.image.load("images/longshot/shot_6.png"),]
 bullet1 = [pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet1.png")]
