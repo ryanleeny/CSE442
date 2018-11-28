@@ -7,7 +7,7 @@ import random
 longshot =[pygame.image.load("images/longshot/shot_1.png"),pygame.image.load("images/longshot/shot_2.png"),pygame.image.load("images/longshot/shot_3.png"),pygame.image.load("images/longshot/shot_4.png"),pygame.image.load("images/longshot/shot_5.png"),pygame.image.load("images/longshot/shot_6.png"),]
 bullet1 = [pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet1.png"),pygame.image.load("images/bullet2.png"),pygame.image.load("images/bullet1.png")]
 rocket = [pygame.image.load("images/rocket/shot_1.png"),pygame.image.load("images/rocket/shot_2.png"),pygame.image.load("images/rocket/shot_3.png"),pygame.image.load("images/rocket/shot_4.png"),pygame.image.load("images/rocket/shot_5.png"),pygame.image.load("images/rocket/shot_6.png"),pygame.image.load("images/rocket/shot_7.png")]
-weapon_frequency = [500, 200, 1000]  #set how fast the bullet come out of the player in ms
+weapon_frequency = [500, 200, 3000]  #set how fast the bullet come out of the player in ms
 weapon_switched = False
 pygame.init()
 fire_sound = pygame.mixer.Sound("music/fire.wav")

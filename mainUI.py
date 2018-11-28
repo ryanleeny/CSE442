@@ -275,7 +275,8 @@ class main(object):
         for bullet in self.hero.weapons:
             enemy_hit = pygame.sprite.spritecollide(bullet, self.enemies, False, pygame.sprite.collide_mask)
             if enemy_hit:
-                bullet.survival = False
+                if(weapon.Weapon.weapon_choice!=2):
+                    bullet.survival = False
 
                 for enemy in enemy_hit:
                     if enemy in self.office_enemies:
