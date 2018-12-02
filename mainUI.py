@@ -115,7 +115,6 @@ class Setting(object):
         Button.button("slow", 190, 380, 100, 50, col1, (255, 255, 255), action="30")
         Button.button("medium", 190, 450, 100, 50, col2, (255, 255, 255), action="60")
         Button.button("fast", 190, 520, 100, 50, col3, (255, 255, 255), action="90")
-        Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
         window.blit(home, (350, 652))
 
 
@@ -401,7 +400,7 @@ class main(object):
             mouse = pygame.mouse.get_pos()
 
             # ####add backcground moving alone with mouse#### #
-            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag, pause_flag
+            global x, y, fifteen_flag, thirty_flag, sixty_flag, gaming_flag, home_flag, setting_flag
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
             fifteen_flag = False #fps#
@@ -507,7 +506,9 @@ class main(object):
                     z = mouse[0] - 10
                     k = 1
                     z2 = z
-
+                if (375 >= mouse[0] >= 347) and (662 <= mouse[1] <= 692) and (mouse_press[0] == True):
+                    home_flag = True
+                    setting_flag = False
                 z5 = (z - 80) / 220
                 pygame.mixer.music.set_volume(z5)
                 z3 = z5 * 100
