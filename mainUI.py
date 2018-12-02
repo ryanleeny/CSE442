@@ -221,6 +221,10 @@ class main(object):
         for officer in self.office_enemies:
             if officer.survival:
                 officer.move()
+                if officer.rect.y >= self.SCREEN_RECT.height:
+                    for ii in range(10):
+                        Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies, self.level)
+                    officer.kill()
                 if officer.hit:
                     pass
                 else:
@@ -339,17 +343,18 @@ class main(object):
 
         # reset timer
         # default create pawn enemy time 1000ms
-        create_pawn_time = 1000
-        # default create office enemy time 5000ms
-        create_office_time = 5000
-        # default create office enemy time 5000ms
-        create_mid_boss_time = 10000
-        # reset create pawn timer
-        pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
-        # reset create officer timer
-        pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
-        # reset create officer timer
-        pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
+        # create_pawn_time = 1000
+        # # default create office enemy time 5000ms
+        # create_office_time = 5000
+        # # default create office enemy time 5000ms
+        # create_mid_boss_time = 10000
+        # # reset create pawn timer
+        # pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
+        # # reset create officer timer
+        # pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
+        # # reset create officer timer
+        # pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
+        self.__set_time()
 
     def __set_time(self):
 
@@ -422,6 +427,8 @@ class main(object):
 
         if self.level < level:
             self.level = level
+
+        self.hero.speed = 5 + ((self.level - 1) * 0.5)
 
 
     ####Below initialize the GUI (Before LOOP)#####

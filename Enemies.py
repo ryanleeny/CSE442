@@ -102,8 +102,8 @@ class Officer(pygame.sprite.Sprite):
 
     def move(self):
         self.rect.y += self.speed
-        if self.rect.y >= self.background_rect.height:
-            self.kill()
+        # if self.rect.y >= self.background_rect.height:
+        #     self.kill()
 
     def set_position(self):
         self.survival = True
@@ -169,15 +169,15 @@ class Mid_boss(pygame.sprite.Sprite):
 def add_enemies(name, bg_size, group1, group2, level):
     if name == 'pawn':
         if level <= 2:
-            speed = random.randint(3, 5)
+            speed = random.randint(3, 6)
         elif 2 < level <= 4:
-            speed = random.randint(4, 6)
+            speed = random.randint(5, 7)
         elif 4 < level <= 7:
-            speed = random.randint(4, 7)
+            speed = random.randint(7, 9)
         elif 7 < level < 10:
-            speed = random.randint(5, 8)
+            speed = random.randint(8, 11)
         else:
-            speed = 10
+            speed = 15
         enemy = Pawn(bg_size, speed)
     if name == 'officer':
         if level <= 2:
