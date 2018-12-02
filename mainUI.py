@@ -1,14 +1,17 @@
 import pygame
+import random
 import Background as bg
 import Hero
 import Enemies
 import weapon
 
+TIMER = pygame.USEREVENT + 5
+
 class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
         cur = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag
+        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag, how_to_play_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action is not None:
@@ -36,6 +39,7 @@ class Button(object):
                     home_flag = True
                     game_over = False
                     refresh_flag = False
+                    how_to_play_flag = False
 
                 if action == "setting":
                     gaming_flag = False
@@ -43,6 +47,7 @@ class Button(object):
                     home_flag = False
                     game_over = False
                     refresh_flag = False
+                    how_to_play_flag = False
 
                 if action == "play":
                     gaming_flag = True
@@ -50,6 +55,15 @@ class Button(object):
                     home_flag = False
                     game_over = False
                     refresh_flag = False
+                    how_to_play_flag = False
+
+                if action == "how_to_play":
+                    gaming_flag = False
+                    setting_flag = False
+                    home_flag = False
+                    game_over = False
+                    refresh_flag = False
+                    how_to_play_flag = True
 
                 if action == "quit":
                     pygame.quit()
@@ -83,8 +97,8 @@ class gameover(object):
         text = myfont.render("GAME OVER", True, red)
         window.blit(text, (80, 140))
 
-        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
-        Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
+        Button.button("Retry", 150, 300, 100, 50, gray, (163, 163, 163), action="play")
+        Button.button("Exit", 150, 450, 100, 50, gray, (163, 163, 163), action="home")
 
 
 class gamepause(object):
@@ -112,9 +126,15 @@ class Setting(object):
         window.blit(text2, (z, 270))
 
         window.blit(fps, (55, 380))
-        Button.button("slow", 190, 380, 100, 50, col1, (255, 255, 255), action="30")
-        Button.button("medium", 190, 450, 100, 50, col2, (255, 255, 255), action="60")
-        Button.button("fast", 190, 520, 100, 50, col3, (255, 255, 255), action="90")
+
+        Button.button("slow", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
+        Button.button("medium", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("fast", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
+        window.blit(home, (350, 652))
+
+class howToPlay(object):
+    @staticmethod
+    def option():
         window.blit(home, (350, 652))
 
 
@@ -124,7 +144,7 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
-    global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
+    global black, white, green, red, gold, blue, yellow,gray, game_record, home, background, background2, background3, background5, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
         background4, game_over, refresh_flag, highest_score
     black = (0, 0, 0)
@@ -134,6 +154,7 @@ class main(object):
     red = (200, 0, 0)
     gold = (227, 207, 87)
     blue = (23, 44, 225)
+    gray = (46,46,46)
     width = 401  # Window width
     height = 700  # Window height
     SCREEN_RECT = pygame.Rect(0, 0, width, height)
@@ -142,7 +163,8 @@ class main(object):
     background2 = pygame.image.load('./images/bg2.jpeg')
     background3 = pygame.image.load('./images/bg3.jpg')
     background4 = pygame.image.load('./images/bg4.jpg')
-    cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
+    background5 =  pygame.image.load('./images/bg5.jpg')
+    cursor1 = pygame.image.load('./images/ship.png')  # vhighest_scoreery basic design on the cursor/ship, but can work on it later
     voice_low = pygame.image.load('./images/vl.png')
     voice_high = pygame.image.load('./images/vh.png')
     voice_col = pygame.image.load('./images/vc.png')
@@ -155,6 +177,7 @@ class main(object):
     setting_flag = False
     home_flag = True
     refresh_flag = False
+    how_to_play_flag = False
 
     global pawn_score, officer_score, mid_boss_score
     pawn_score = 10
@@ -182,8 +205,13 @@ class main(object):
 
     def __update_score(self):
 
-        score_text = self.Score_text.render("Score : %s" % str(self.game_score), True, white)
+        score_text = self.Score_text.render("Score : %s" % str(self.game_score), True, yellow)
         window.blit(score_text, (10, 5))
+
+    def __display_level(self):
+
+        level_text = self.Score_text.render("Lv : %s" % str(self.level), True, yellow)
+        window.blit(level_text, (300, 5))
 
     def __update_sprites(self):
         # move background
@@ -226,6 +254,10 @@ class main(object):
         for officer in self.office_enemies:
             if officer.survival:
                 officer.move()
+                if officer.rect.y >= self.SCREEN_RECT.height:
+                    for ii in range(10):
+                        Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies, self.level)
+                    officer.kill()
                 if officer.hit:
                     pass
                 else:
@@ -269,13 +301,22 @@ class main(object):
                 exit()
             elif gaming_flag:
                 if event.type == Enemies.CREATE_PAWN_EVENT:
-                    Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies)
+                    Enemies.add_enemies("pawn", self.SCREEN_RECT, self.pawn_enemies, self.enemies, self.level)
                 elif event.type == Enemies.CREATE_OFFICER_EVENT:
-                    Enemies.add_enemies("officer", self.SCREEN_RECT, self.office_enemies, self.enemies)
+                    Enemies.add_enemies("officer", self.SCREEN_RECT, self.office_enemies, self.enemies, self.level)
                 elif event.type == Enemies.CREATE_MID_BOSS_EVEN:
-                    Enemies.add_enemies("mid_boss", self.SCREEN_RECT, self.mid_boss_enemies, self.enemies)
+                    Enemies.add_enemies("mid_boss", self.SCREEN_RECT, self.mid_boss_enemies, self.enemies, self.level)
                 elif event.type == Hero.HERO_SHOOT_EVENT:
                     self.hero.shoot()
+                    if weapon.Weapon.weapon_choice == 1:
+                        self.game_score -= 5
+
+                    if weapon.Weapon.weapon_choice == 2 and weapon.minus_score:
+                        self.game_score -= 50
+                    weapon.minus_score = False
+
+            elif event.type == TIMER:
+                self.__set_time()
 
     def __check_collide(self):
         enemies_down = pygame.sprite.spritecollide(self.hero, self.enemies, False, pygame.sprite.collide_mask)
@@ -288,20 +329,27 @@ class main(object):
         for bullet in self.hero.weapons:
             enemy_hit = pygame.sprite.spritecollide(bullet, self.enemies, False, pygame.sprite.collide_mask)
             if enemy_hit:
-                bullet.survival = False
+                if weapon.Weapon.weapon_choice != 2:
+                    bullet.survival = False
 
                 for enemy in enemy_hit:
                     if enemy in self.office_enemies:
-                        enemy.hp -= 1
-                        if enemy.hp == 0:
+                        if weapon.Weapon.weapon_choice == 1:
+                            enemy.hp -= 2
+                        else:
+                            enemy.hp -= 1
+                        if enemy.hp == 0 or enemy.hp < 0:
                             enemy.survival = False
 
                     if enemy in self.pawn_enemies:
                         enemy.survival = False
 
                     if enemy in self.mid_boss_enemies:
-                        enemy.hp -= 1
-                        if enemy.hp == 0:
+                        if weapon.Weapon.weapon_choice == 1:
+                            enemy.hp -= 2
+                        else:
+                            enemy.hp -= 1
+                        if enemy.hp == 0 or enemy.hp < 0:
                             enemy.survival = False
 
     def __refresh_game(self):
@@ -316,6 +364,10 @@ class main(object):
         # reset game
         self.hero.set_position()
         self.game_score = 0
+        self.level = 1
+
+        # reset weapon
+        weapon.Weapon.weapon_choice = 0
 
         # reset bg position
         for back_g in self.bg_group:
@@ -324,17 +376,93 @@ class main(object):
 
         # reset timer
         # default create pawn enemy time 1000ms
-        create_pawn_time = 1000
-        # default create office enemy time 5000ms
-        create_office_time = 5000
-        # default create office enemy time 5000ms
-        create_mid_boss_time = 10000
-        # reset create pawn timer
+        # create_pawn_time = 1000
+        # # default create office enemy time 5000ms
+        # create_office_time = 5000
+        # # default create office enemy time 5000ms
+        # create_mid_boss_time = 10000
+        # # reset create pawn timer
+        # pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
+        # # reset create officer timer
+        # pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
+        # # reset create officer timer
+        # pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
+        self.__set_time()
+
+    def __set_time(self):
+
+        if self.level < 3:
+            # default create pawn enemy time 1000ms, will change during the score up
+            create_pawn_time = random.randint(800 - ((self.level - 1) * 50), 1200 - ((self.level - 1) * 50))
+            # default create office enemy time 5000ms, will change during the score up
+            create_office_time = random.randint(2500 - ((self.level - 1) * 50), 3000 - ((self.level - 1) * 50))
+            # default create office enemy time 5000ms, will change during the score up
+            create_mid_boss_time = random.randint(10000 - ((self.level - 1) * 50), 12000 - ((self.level - 1) * 50))
+        elif 3 <= self.level < 5:
+            # default create pawn enemy time 1000ms, will change during the score up
+            create_pawn_time = random.randint(700 - ((self.level - 2) * 100), 1100 - ((self.level - 2) * 100))
+            # default create office enemy time 5000ms, will change during the score up
+            create_office_time = random.randint(2000 - ((self.level - 2) * 100), 2500 - ((self.level - 2) * 100))
+            # default create office enemy time 5000ms, will change during the score up
+            create_mid_boss_time = random.randint(7000 - ((self.level - 2) * 100), 9000 - ((self.level - 2) * 100))
+        elif 5 <= self.level < 8:
+            # default create pawn enemy time 1000ms, will change during the score up
+            create_pawn_time = random.randint(500 - ((self.level - 5) * 50), 1200 - ((self.level - 5) * 50))
+            # default create office enemy time 5000ms, will change during the score up
+            create_office_time = random.randint(1750 - ((self.level - 5) * 150), 2750 - ((self.level - 5) * 150))
+            # default create office enemy time 5000ms, will change during the score up
+            create_mid_boss_time = random.randint(5000 - ((self.level - 5) * 150), 6000 - ((self.level - 5) * 150))
+        elif 8 <= self.level:
+            # default create pawn enemy time 1000ms, will change during the score up
+            create_pawn_time = random.randint(350, 1150 - ((self.level - 8) * 50))
+            # default create office enemy time 5000ms, will change during the score up
+            create_office_time = random.randint(1000, 3000 - ((self.level - 8) * 50))
+            # default create office enemy time 5000ms, will change during the score up
+            create_mid_boss_time = random.randint(3000, 4500 - ((self.level - 8) * 50))
+
         pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
-        # reset create officer timer
+        # set create officer timer
         pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
-        # reset create officer timer
+        # set create officer timer
         pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
+
+    def __score(self):
+
+        if self.game_score < 0:
+            global game_over, gaming_flag, refresh_flag, highest_score
+
+            gaming_flag = False
+            game_over = True
+            refresh_flag = True
+
+    def __level(self):
+        level = 0
+        if self.game_score < 100:
+            level = 1
+        elif 100 <= self.game_score < 200:
+            level = 2
+        elif 200 <= self.game_score < 500:
+            level = 3
+        elif 500 <= self.game_score < 600:
+            level = 4
+        elif 600 <= self.game_score < 1000:
+            level = 5
+        elif 1000 <= self.game_score < 2000:
+            level = 6
+        elif 2000 <= self.game_score < 3000:
+            level = 7
+        elif 3000 <= self.game_score < 4000:
+            level = 8
+        elif 5000 <= self.game_score < 6000:
+            level = 9
+        elif 6000 <= self.game_score < 7000:
+            level = 10
+
+        if self.level < level:
+            self.level = level
+
+        self.hero.speed = 5 + ((self.level - 1) * 0.5)
+
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
@@ -349,6 +477,7 @@ class main(object):
         z3 = z5 * 100
         z4 = int(z3)
         FPS = 60
+
         col1 = col3 = gold
         col2 = white
 
@@ -358,18 +487,21 @@ class main(object):
         create_office_time = 5000
         # default create office enemy time 5000ms, will change during the score up
         create_mid_boss_time = 10000
+
         # hero shoot time
         hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
         # init sprites_group
         self.__create_sprites_group()
-        # set create pawn timer
-        pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
-        # set create officer timer
-        pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
-        # set create officer timer
-        pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
+        # # set create pawn timer
+        # pygame.time.set_timer(Enemies.CREATE_PAWN_EVENT, create_pawn_time)
+        # # set create officer timer
+        # pygame.time.set_timer(Enemies.CREATE_OFFICER_EVENT, create_office_time)
+        # # set create officer timer
+        # pygame.time.set_timer(Enemies.CREATE_MID_BOSS_EVEN, create_mid_boss_time)
         # set shoot timer
         pygame.time.set_timer(Hero.HERO_SHOOT_EVENT, hero_shoot_fre)
+        # emeny refresh rate set
+        pygame.time.set_timer(TIMER, 500)
         # get highest score
         with open("./score.txt", 'r') as f:
             highest_score = int(f.read())
@@ -384,6 +516,8 @@ class main(object):
         self.Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)
         # in game score
         self.game_score = 0
+        # in game level
+        self.level = 1
 
 
         # ###main loop of the GUI#### #
@@ -400,7 +534,9 @@ class main(object):
             mouse = pygame.mouse.get_pos()
 
             # ####add backcground moving alone with mouse#### #
-            global x, y, fifteen_flag, thirty_flag, sixty_flag, gaming_flag, home_flag, setting_flag
+
+            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag, setting_flag, home_flag
+
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
             fifteen_flag = False #fps#
@@ -413,6 +549,8 @@ class main(object):
             pygame.mouse.set_visible(False)
 
             if gaming_flag:
+
+
                 # load the background music for game
                 if i == 1:
                     j = k
@@ -456,7 +594,15 @@ class main(object):
                 # function for update screen
                     self.__update_sprites()
                 # function for update score display
-                    self.__update_score()
+
+                self.__update_score()
+                # update level
+                self.__level()
+                # display level
+                self.__display_level()
+                # check if score is less than 0
+                self.__score()
+
 
             elif game_over:
                 i = k
@@ -541,9 +687,10 @@ class main(object):
                 window.blit(background3, (x, y))
 
                 ####Create Button####
-                Button.button("play", 150, 300, 100, 50, green, (0, 255, 0), action="play")
-                Button.button("setting", 150, 400, 100, 50, yellow, (255, 255, 0), action="setting")
-                Button.button("quit", 150, 500, 100, 50, red, (255, 0, 0), action="quit")
+                Button.button("play", 150, 300, 100, 50, gray, (163, 163, 163), action="play")
+                Button.button("setting", 150, 400, 100, 50, gray, (163, 163, 163), action="setting")
+                Button.button("How To Play", 150, 500, 100, 50, gray, (163, 163, 163), action="how_to_play")
+                Button.button("quit", 150, 600, 100, 50, gray, (163, 163, 163), action="quit")
                 window.blit(sound_off, (0, 0))
                 window.blit(sound_on, (50, 0))
                 pygame.draw.line(window, black, (46, 6), (46, 42), 2)
@@ -579,9 +726,19 @@ class main(object):
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
 
+            elif how_to_play_flag:
+                window.blit(background5, (x, y))
+                howToPlay.option()
+                if (375 >= mouse[0] >= 347) and (662 <= mouse[1] <= 692) and (mouse_press[0] == True):
+                    home_flag = True
+                    setting_flag = False
+                window.blit(cursor1, (mx, my))
+
+
             #####refresh everything#####
             clock.tick(FPS)
             pygame.display.update()
+
 
 if __name__ == '__main__':
     pygame.init()
