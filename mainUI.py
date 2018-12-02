@@ -11,7 +11,7 @@ class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
         cur = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag
+        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag, how_to_play_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action is not None:
@@ -39,6 +39,7 @@ class Button(object):
                     home_flag = True
                     game_over = False
                     refresh_flag = False
+                    how_to_play_flag = False
 
 
                 if action == "setting":
@@ -48,6 +49,7 @@ class Button(object):
                     home_flag = False
                     game_over = False
                     refresh_flag = False
+                    how_to_play_flag = False
 
                 if action == "play":
                     #print("Play Button Click, go to gameLoop")
@@ -56,6 +58,15 @@ class Button(object):
                     home_flag = False
                     game_over = False
                     refresh_flag = False
+                    how_to_play_flag = False
+
+                if action == "how_to_play":
+                    gaming_flag = False
+                    setting_flag = False
+                    home_flag = False
+                    game_over = False
+                    refresh_flag = False
+                    how_to_play_flag = True
 
                 if action == "quit":
                     pygame.quit()
@@ -101,10 +112,14 @@ class Setting(object):
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
         window.blit(fps, (55, 380))
-        Button.button("30", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
-        Button.button("60", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
-        Button.button("90", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
-        Button.button("", 336, 638, 50, 50, white, (255, 255, 255), action="home")
+        Button.button("slow", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
+        Button.button("medium", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
+        Button.button("fast", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
+        window.blit(home, (350, 652))
+
+class howToPlay(object):
+    @staticmethod
+    def option():
         window.blit(home, (350, 652))
 
 
@@ -114,7 +129,7 @@ class main(object):
     global window
 
     #####global varaible declaration here#####
-    global black, white, green, red, gold, blue, yellow, game_record, home, background, background2, background3, fps, voice_col,\
+    global black, white, green, red, gold, blue, yellow,gray, game_record, home, background, background2, background3, background5, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
         background4, game_over, refresh_flag, highest_score
     black = (0, 0, 0)
@@ -124,6 +139,7 @@ class main(object):
     red = (200, 0, 0)
     gold = (227, 207, 87)
     blue = (23, 44, 225)
+    gray = (46,46,46)
     width = 401  # Window width
     height = 700  # Window height
     SCREEN_RECT = pygame.Rect(0, 0, width, height)
@@ -132,7 +148,8 @@ class main(object):
     background2 = pygame.image.load('./images/bg2.jpeg')
     background3 = pygame.image.load('./images/bg3.jpg')
     background4 = pygame.image.load('./images/bg4.jpg')
-    cursor1 = pygame.image.load('./images/ship.png')  # very basic design on the cursor/ship, but can work on it later
+    background5 =  pygame.image.load('./images/bg5.jpg')
+    cursor1 = pygame.image.load('./images/ship.png')  # vhighest_scoreery basic design on the cursor/ship, but can work on it later
     voice_low = pygame.image.load('./images/vl.png')
     voice_high = pygame.image.load('./images/vh.png')
     voice_col = pygame.image.load('./images/vc.png')
@@ -145,6 +162,7 @@ class main(object):
     setting_flag = False
     home_flag = True
     refresh_flag = False
+    how_to_play_flag = False
 
     global pawn_score, officer_score, mid_boss_score
     pawn_score = 10
@@ -485,7 +503,7 @@ class main(object):
             mouse = pygame.mouse.get_pos()
 
             # ####add backcground moving alone with mouse#### #
-            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag
+            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag, setting_flag, home_flag
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
             fifteen_flag = False #fps#
@@ -555,6 +573,9 @@ class main(object):
                     z = z + 10
                 if (330 >= mouse[1] >= 295) and (310 >= mouse[0] >= 90) and (mouse_press[0] == True):
                     z = mouse[0] - 10
+                if (375 >= mouse[0] >= 347) and (662 <= mouse[1] <= 692) and (mouse_press[0] == True):
+                    home_flag = True
+                    setting_flag = False
                 pygame.mixer.music.set_volume((z - 80) / 220)
                 pygame.mixer.Sound.set_volume(weapon.weapon_sound[weapon.Weapon.weapon_choice],(z - 80) / 220)
                 z2 = z
@@ -580,9 +601,10 @@ class main(object):
                 window.blit(background3, (x, y))
 
                 ####Create Button####
-                Button.button("play", 150, 300, 100, 50, green, (0, 255, 0), action="play")
-                Button.button("setting", 150, 400, 100, 50, yellow, (255, 255, 0), action="setting")
-                Button.button("quit", 150, 500, 100, 50, red, (255, 0, 0), action="quit")
+                Button.button("play", 150, 300, 100, 50, gray, (163, 163, 163), action="play")
+                Button.button("setting", 150, 400, 100, 50, gray, (163, 163, 163), action="setting")
+                Button.button("How To Play", 150, 500, 100, 50, gray, (163, 163, 163), action="how_to_play")
+                Button.button("quit", 150, 600, 100, 50, gray, (163, 163, 163), action="quit")
                 window.blit(sound_off, (0, 0))
                 window.blit(sound_on, (50, 0))
                 pygame.draw.line(window, black, (46, 6), (46, 42), 2)
@@ -606,6 +628,15 @@ class main(object):
 
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
+
+            elif how_to_play_flag:
+                window.blit(background5, (x, y))
+                howToPlay.option()
+                if (375 >= mouse[0] >= 347) and (662 <= mouse[1] <= 692) and (mouse_press[0] == True):
+                    home_flag = True
+                    setting_flag = False
+                window.blit(cursor1, (mx, my))
+
 
             #####refresh everything#####
             clock.tick(FPS)
