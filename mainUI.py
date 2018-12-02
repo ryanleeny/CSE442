@@ -41,9 +41,7 @@ class Button(object):
                     refresh_flag = False
                     how_to_play_flag = False
 
-
                 if action == "setting":
-                    #print("Setting Button Clicked")
                     gaming_flag = False
                     setting_flag = True
                     home_flag = False
@@ -52,7 +50,6 @@ class Button(object):
                     how_to_play_flag = False
 
                 if action == "play":
-                    #print("Play Button Click, go to gameLoop")
                     gaming_flag = True
                     setting_flag = False
                     home_flag = False
@@ -104,6 +101,18 @@ class gameover(object):
         Button.button("Exit", 150, 450, 100, 50, gray, (163, 163, 163), action="home")
 
 
+class gamepause(object):
+    @staticmethod
+    def pause():
+        myfont = pygame.font.Font(None, 60)
+        text = myfont.render("Pause", True, red)
+        window.blit(text, (140, 140))
+
+        Button.button("Retry", 150, 350, 100, 50, gold, (255, 255, 255), action="play")
+        Button.button("Continue", 150, 250, 100, 50, gold, (255, 255, 255))
+        Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
+
+
 class Setting(object):
     @staticmethod
     def option():
@@ -111,7 +120,13 @@ class Setting(object):
         window.blit(voice_col, (z, 289))
         window.blit(voice_low, (40, 277))
         window.blit(voice_high, (320, 277))
+
+        myfont2 = pygame.font.Font(None, 30)
+        text2 = myfont2.render(str(z4), True, black)
+        window.blit(text2, (z, 270))
+
         window.blit(fps, (55, 380))
+
         Button.button("slow", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
         Button.button("medium", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
         Button.button("fast", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
@@ -451,11 +466,27 @@ class main(object):
 
     ####Below initialize the GUI (Before LOOP)#####
     def __init__(self):
-        global z, FPS, z2, i, highest_score
+        global z, FPS, z2, z3, z4, z5, i, j, k, m, col1, col2, col3, highest_score
         i = 1
+        j = 1
+        k = 1
+        m = 1
         z = 180
         z2 = z
+        z5 = (z - 80) / 220
+        z3 = z5 * 100
+        z4 = int(z3)
         FPS = 60
+
+        col1 = col3 = gold
+        col2 = white
+
+        # default create pawn enemy time 1000ms, will change during the score up
+        create_pawn_time = 1000
+        # default create office enemy time 5000ms, will change during the score up
+        create_office_time = 5000
+        # default create office enemy time 5000ms, will change during the score up
+        create_mid_boss_time = 10000
 
         # hero shoot time
         hero_shoot_fre = weapon.weapon_frequency[weapon.Weapon.weapon_choice]
@@ -480,7 +511,7 @@ class main(object):
         pygame.mixer.music.load('music/Tech Inc1 Loop.wav')  # load the music
         pygame.mixer.music.play(-1)  # -1 means unlimit play
         # pygame.mixer.music.queue('next.mp3') #second music
-        pygame.mixer.music.set_volume((z - 80) / 220)
+        pygame.mixer.music.set_volume(z5)
         # creating font object
         self.Score_text = pygame.font.Font("chela-one/ChelaOne-Regular.ttf", 40)
         # in game score
@@ -503,7 +534,9 @@ class main(object):
             mouse = pygame.mouse.get_pos()
 
             # ####add backcground moving alone with mouse#### #
+
             global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag, setting_flag, home_flag
+
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
             fifteen_flag = False #fps#
@@ -520,15 +553,48 @@ class main(object):
 
                 # load the background music for game
                 if i == 1:
+                    j = k
                     pygame.mixer.music.load('music/Defense Line.mp3')
                     pygame.mixer.music.play(-1)
-                    i = i + 1
+                    i = 2
 
+                # pause game
+                if (k_press[pygame.K_ESCAPE] == True):
+                    i = 3
+                    pygame.mixer.music.pause()
+                if i == 3:
+                    window.blit(background4, (x, y))
+                    gamepause.pause()
+                    #####draw the mouse here so is on top of everything else#####
+                    window.blit(cursor1, (mx, my))
+
+                    if (248 >= mouse[0] >= 147) and (262 <= mouse[1] <= 312) and (mouse_press[0] == True):
+                        if k == 1:
+                            pygame.mixer.music.unpause()
+                        i = 2
+
+                    elif (mouse_press[0] == True) and (248 >= mouse[0] >= 147) and (363 <= mouse[1] <= 412):
+                        if k == 1:
+                            i = 1
+                        else:
+                            i = 2
+                        self.__refresh_game()
+
+                    elif (248 >= mouse[0] >= 147) and (436 <= mouse[1] <= 512) and (mouse_press[0] == True):
+                        pygame.mixer.music.load('music/Tech Inc1 Loop.wav')
+                        pygame.mixer.music.play(-1)
+                        if k == 2:
+                            pygame.mixer.music.pause()
+                        self.__refresh_game()
+
+                # game running
+                if i == 2:
                 # check collision
-                self.__check_collide()
+                    self.__check_collide()
                 # function for update screen
-                self.__update_sprites()
+                    self.__update_sprites()
                 # function for update score display
+
                 self.__update_score()
                 # update level
                 self.__level()
@@ -537,24 +603,31 @@ class main(object):
                 # check if score is less than 0
                 self.__score()
 
+
             elif game_over:
+                i = k
                 # background music back to main music
-                if i == 2:
+                if j == 1:
                     pygame.mixer.music.load('music/Tech Inc1 Loop.wav')
                     pygame.mixer.music.play(-1)
-                    i = i - 1
+                    j = 3
+
+                if j == 2:
+                    pygame.mixer.music.load('music/Tech Inc1 Loop.wav')
+                    pygame.mixer.music.play(-1)
+                    pygame.mixer.music.pause()
+                    j = 3
 
                 window.blit(background4, (x, y))
                 gameover.finish()
 
                 #####draw the mouse here so is on top of everything else#####
                 window.blit(cursor1, (mx, my))
+
                 global refresh_flag
 
                 if refresh_flag:
-
                     refresh_flag = False
-
                     self.__refresh_game()
 
             elif setting_flag:
@@ -568,29 +641,42 @@ class main(object):
                 if z >= 300:
                     z = 300
                 if (77 >= mouse[0] >= 48) and (300 <= mouse[1] <= 328) and (z > 80) and (mouse_press[0] == True):
-                    z = z - 10
+                    z = z - 1
+                    k = 1
+                    z2 = z
                 if (360 >= mouse[0] >= 320) and (296 <= mouse[1] <= 330) and (z < 300) and (mouse_press[0] == True):
-                    z = z + 10
+                    z = z + 1
+                    k = 1
+                    z2 = z
                 if (330 >= mouse[1] >= 295) and (310 >= mouse[0] >= 90) and (mouse_press[0] == True):
                     z = mouse[0] - 10
+                    k = 1
+                    z2 = z
                 if (375 >= mouse[0] >= 347) and (662 <= mouse[1] <= 692) and (mouse_press[0] == True):
                     home_flag = True
                     setting_flag = False
-                pygame.mixer.music.set_volume((z - 80) / 220)
-                pygame.mixer.Sound.set_volume(weapon.weapon_sound[weapon.Weapon.weapon_choice],(z - 80) / 220)
-                z2 = z
+                z5 = (z - 80) / 220
+                pygame.mixer.music.set_volume(z5)
+                z3 = z5 * 100
+                z4 = int(z3)
 
                 ###pfs###
                 if fifteen_flag:
                     FPS = 30
+                    col1 = white
+                    col2 = col3 = gold
                     fifteen_flag = False
                     continue
                 if thirty_flag:
                     FPS = 60
+                    col2 = white
+                    col1 = col3 = gold
                     thirty_flag = False
                     continue
                 if sixty_flag:
                     FPS = 90
+                    col3 = white
+                    col2 = col1 = gold
                     sixty_flag = False
                     continue
 
@@ -610,14 +696,25 @@ class main(object):
                 pygame.draw.line(window, black, (46, 6), (46, 42), 2)
 
                 ####Mute button####
+                i = j = k
+                if m == 1:
+                    z2 = z
+                    m = 2
                 if (42 >= mouse[0] >= 0) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
                     pygame.mixer.music.pause()
-                    i = 3
+                    i = 2
+                    j = 2
+                    k = 2
                     z = 80
-
                 if (89 >= mouse[0] >= 46) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
                     pygame.mixer.music.unpause()
+                    m = 1
+                    if k == 2:
+                        z5 = (z2 - 80) / 220
+                    pygame.mixer.music.set_volume(z5)
                     i = 1
+                    j = 1
+                    k = 1
                     z = z2
 
                 ####coins_Display#####
@@ -641,7 +738,6 @@ class main(object):
             #####refresh everything#####
             clock.tick(FPS)
             pygame.display.update()
-
 
 
 if __name__ == '__main__':
