@@ -100,8 +100,8 @@ class gameover(object):
         text = myfont.render("GAME OVER", True, red)
         window.blit(text, (80, 140))
 
-        Button.button("Retry", 150, 300, 100, 50, gold, (255, 255, 255), action="play")
-        Button.button("Exit", 150, 450, 100, 50, gold, (255, 255, 255), action="home")
+        Button.button("Retry", 150, 300, 100, 50, gray, (163, 163, 163), action="play")
+        Button.button("Exit", 150, 450, 100, 50, gray, (163, 163, 163), action="home")
 
 
 class Setting(object):
