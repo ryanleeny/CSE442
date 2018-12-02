@@ -127,9 +127,9 @@ class Setting(object):
 
         window.blit(fps, (55, 380))
 
-        Button.button("slow", 190, 380, 100, 50, gold, (255, 255, 255), action="30")
-        Button.button("medium", 190, 450, 100, 50, gold, (255, 255, 255), action="60")
-        Button.button("fast", 190, 520, 100, 50, gold, (255, 255, 255), action="90")
+        Button.button("slow", 190, 380, 100, 50, col1, (255, 255, 255), action="30")
+        Button.button("medium", 190, 450, 100, 50, col2, (255, 255, 255), action="60")
+        Button.button("fast", 190, 520, 100, 50, col3, (255, 255, 255), action="90")
         window.blit(home, (350, 652))
 
 class howToPlay(object):
@@ -631,7 +631,7 @@ class main(object):
                     self.__refresh_game()
 
             elif setting_flag:
-                window.blit(background2, (x, y)) #set up the background
+                window.blit(background3, (x, y)) #set up the background
                 Setting.option()  #branch to function named option() from class setting
                 pygame.mixer.music.unpause()
 
