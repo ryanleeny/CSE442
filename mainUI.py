@@ -11,7 +11,7 @@ class Button(object):
     def button(text, x, y, width, height, inactive_color, active_color, action=None):
         cur = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag, how_to_play_flag
+        global setting_flag, gaming_flag, home_flag, fifteen_flag, thirty_flag, sixty_flag, game_over, refresh_flag, how_to_play_flag, pause_flag
         if x + width > cur[0] > x and y + height > cur[1] > y:
             pygame.draw.rect(window, active_color, (x, y, width, height))
             if click[0] == 1 and action is not None:
@@ -40,6 +40,7 @@ class Button(object):
                     game_over = False
                     refresh_flag = False
                     how_to_play_flag = False
+                    pause_flag = False
 
                 if action == "setting":
                     gaming_flag = False
@@ -48,6 +49,7 @@ class Button(object):
                     game_over = False
                     refresh_flag = False
                     how_to_play_flag = False
+                    pause_flag = False
 
                 if action == "play":
                     gaming_flag = True
@@ -56,6 +58,7 @@ class Button(object):
                     game_over = False
                     refresh_flag = False
                     how_to_play_flag = False
+                    pause_flag = False
 
                 if action == "how_to_play":
                     gaming_flag = False
@@ -64,6 +67,7 @@ class Button(object):
                     game_over = False
                     refresh_flag = False
                     how_to_play_flag = True
+                    pause_flag = False
 
                 if action == "quit":
                     pygame.quit()
@@ -146,7 +150,7 @@ class main(object):
     #####global varaible declaration here#####
     global black, white, green, red, gold, blue, yellow,gray, game_record, home, background, background2, background3, background5, fps, voice_col,\
         voice_low, voice_high, sound_off, width, height, x, y, cursor1, home_flag, gaming_flag, setting_flag, sound_on, \
-        background4, game_over, refresh_flag, highest_score
+        background4, game_over, refresh_flag, highest_score, pause_flag
     black = (0, 0, 0)
     white = (255, 255, 255)
     green = (34, 177, 76)
@@ -178,6 +182,7 @@ class main(object):
     home_flag = True
     refresh_flag = False
     how_to_play_flag = False
+    pause_flag = False
 
     global pawn_score, officer_score, mid_boss_score
     pawn_score = 10
@@ -535,7 +540,7 @@ class main(object):
 
             # ####add backcground moving alone with mouse#### #
 
-            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag, setting_flag, home_flag
+            global x, y, fifteen_flag, thirty_flag, sixty_flag, retry_flag, gaming_flag, setting_flag, home_flag, pause_flag, how_to_play_fla
 
             x = mouse[0] * -0.05
             y = mouse[1] * -0.05
@@ -550,7 +555,6 @@ class main(object):
 
             if gaming_flag:
 
-
                 # load the background music for game
                 if i == 1:
                     j = k
@@ -563,35 +567,14 @@ class main(object):
                     i = 3
                     pygame.mixer.music.pause()
                 if i == 3:
-                    window.blit(background4, (x, y))
-                    gamepause.pause()
-                    #####draw the mouse here so is on top of everything else#####
-                    window.blit(cursor1, (mx, my))
-
-                    if (248 >= mouse[0] >= 147) and (262 <= mouse[1] <= 312) and (mouse_press[0] == True):
-                        if k == 1:
-                            pygame.mixer.music.unpause()
-                        i = 2
-
-                    elif (mouse_press[0] == True) and (248 >= mouse[0] >= 147) and (363 <= mouse[1] <= 412):
-                        if k == 1:
-                            i = 1
-                        else:
-                            i = 2
-                        self.__refresh_game()
-
-                    elif (248 >= mouse[0] >= 147) and (436 <= mouse[1] <= 512) and (mouse_press[0] == True):
-                        pygame.mixer.music.load('music/Tech Inc1 Loop.wav')
-                        pygame.mixer.music.play(-1)
-                        if k == 2:
-                            pygame.mixer.music.pause()
-                        self.__refresh_game()
+                    gaming_flag = False
+                    pause_flag = True
 
                 # game running
                 if i == 2:
-                # check collision
+                    # check collision
                     self.__check_collide()
-                # function for update screen
+                    # function for update screen
                     self.__update_sprites()
                 # function for update score display
 
@@ -602,6 +585,40 @@ class main(object):
                 self.__display_level()
                 # check if score is less than 0
                 self.__score()
+
+
+            elif pause_flag:
+                window.blit(background4, (x, y))
+                gamepause.pause()
+                #####draw the mouse here so is on top of everything else#####
+                window.blit(cursor1, (mx, my))
+
+                if (248 >= mouse[0] >= 147) and (262 <= mouse[1] <= 312) and (mouse_press[0] == True):
+
+                    if k == 1:
+                        pygame.mixer.music.unpause()
+                    i = 2
+                    pause_flag = False
+                    gaming_flag = True
+
+                elif (mouse_press[0] == True) and (248 >= mouse[0] >= 147) and (363 <= mouse[1] <= 412):
+                    if k == 1:
+                        i = 1
+                    else:
+                        i = 2
+                    self.__refresh_game()
+                    pause_flag = False
+                    gaming_flag = True
+
+                elif (248 >= mouse[0] >= 147) and (436 <= mouse[1] <= 512) and (mouse_press[0] == True):
+                    pygame.mixer.music.load('music/Tech Inc1 Loop.wav')
+                    pygame.mixer.music.play(-1)
+                    if k == 2:
+                        pygame.mixer.music.pause()
+                    self.__refresh_game()
+                    pause_flag = False
+                    gaming_flag = False
+                    home_flag = True
 
 
             elif game_over:
@@ -731,7 +748,7 @@ class main(object):
                 howToPlay.option()
                 if (375 >= mouse[0] >= 347) and (662 <= mouse[1] <= 692) and (mouse_press[0] == True):
                     home_flag = True
-                    setting_flag = False
+                    how_to_play_fla = False
                 window.blit(cursor1, (mx, my))
 
 
