@@ -511,6 +511,9 @@ class main(object):
         with open("./score.txt", 'r') as f:
             highest_score = int(f.read())
             f.close()
+        text = open('1.txt', mode='w')
+        text.write('2')
+        text.close()
 
         ####Play background music####
         pygame.mixer.music.load('music/Tech Inc1 Loop.wav')  # load the music
@@ -653,6 +656,14 @@ class main(object):
                 pygame.mixer.music.unpause()
 
                 ###---volume control---###
+                if z == 80:
+                    text = open('1.txt', mode='w')
+                    text.write('1')
+                    text.close()
+                if z != 80:
+                    text = open('1.txt', mode='w')
+                    text.write('2')
+                    text.close()
                 if z <= 80:
                     z = 80
                 if z >= 300:
@@ -719,12 +730,18 @@ class main(object):
                     m = 2
                 if (42 >= mouse[0] >= 0) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
                     pygame.mixer.music.pause()
+                    text = open('1.txt', mode='w')
+                    text.write('1')
+                    text.close()
                     i = 2
                     j = 2
                     k = 2
                     z = 80
                 if (89 >= mouse[0] >= 46) and (18 <= mouse[1] <= 55) and (mouse_press[0] == True):
                     pygame.mixer.music.unpause()
+                    text = open('1.txt', mode='w')
+                    text.write('2')
+                    text.close()
                     m = 1
                     if k == 2:
                         z5 = (z2 - 80) / 220

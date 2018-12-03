@@ -29,6 +29,11 @@ class Weapon(pygame.sprite.Sprite):
     weapon_timer = pygame.USEREVENT + 3
     weapon_timer_choice = [0, 120, 200]
     def __init__(self, x, y):
+        global content, py
+        file_handle = open('1.txt', mode='r')
+        content = file_handle.read(1)
+        file_handle.close()
+        content = int(content)
 
         pygame.sprite.Sprite.__init__(self)
         self.image = self.weapon_img[self.weapon_choice][0]
@@ -47,7 +52,11 @@ class Weapon(pygame.sprite.Sprite):
         self.survival = True
         self.fire = False
         pygame.time.set_timer(self.weapon_timer, self.weapon_timer_choice[self.weapon_choice])
-        pygame.mixer.Sound.play(weapon_sound[self.weapon_choice])
+        py = pygame.mixer.Sound.play(weapon_sound[self.weapon_choice])
+        if content == 1:
+            py.set_volume(0)
+        if content == 2:
+            py.set_volume(0.4)
 
      #this update the index in the weapon image array, but with modification of incrementing speed
     def check_animate(self):
